@@ -1,20 +1,20 @@
 <!-- ============================================
-     NAVBAR - Barre de Navigation
+     NAVBAR - Barra di Navigazione
      ============================================
-     Composant de navigation présent sur toutes les pages
-     S'adapte selon l'état de connexion de l'utilisateur
+     Componente di navigazione presente su tutte le pagine
+     Si adatta in base allo stato di connessione dell'utente
 -->
 
 <template>
     <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container">
-            <!-- Logo / Nom de l'application -->
+            <!-- Logo / Nome dell'applicazione -->
             <RouterLink class="navbar-brand" to="/">
                 <i class="bi bi-grid-3x3-gap-fill me-2" style="color: #4361ee;"></i>
                 <span style="color: #4361ee; font-weight: bold;">Expo</span>Match
             </RouterLink>
             
-            <!-- Bouton hamburger pour mobile -->
+            <!-- Pulsante hamburger per mobile -->
             <button 
                 class="navbar-toggler" 
                 type="button" 
@@ -24,9 +24,9 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             
-            <!-- Liens de navigation -->
+            <!-- Link di navigazione -->
             <div class="collapse navbar-collapse" id="navbarNav">
-                <!-- Liens à gauche -->
+                <!-- Link a sinistra -->
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
                         <RouterLink class="nav-link" to="/">Cerca Eventi</RouterLink>
@@ -36,9 +36,9 @@
                     </li>
                 </ul>
                 
-                <!-- Liens à droite (connexion/déconnexion) -->
+                <!-- Link a destra (accesso/disconnessione) -->
                 <ul class="navbar-nav">
-                    <!-- Si NON connecté -->
+                    <!-- Se NON connesso -->
                     <template v-if="!isAuthenticated">
                         <li class="nav-item">
                             <RouterLink class="nav-link" to="/login">Accedi</RouterLink>
@@ -48,7 +48,7 @@
                         </li>
                     </template>
                     
-                    <!-- Si connecté -->
+                    <!-- Se connesso -->
                     <template v-else>
                         <li class="nav-item">
                             <span class="nav-link">Ciao, {{ user?.nome }}</span>
@@ -81,14 +81,14 @@ export default {
     
     data() {
         return {
-            // État d'authentification
+            // Stato di autenticazione
             isAuthenticated: false,
             user: null
         }
     },
     
     computed: {
-        // Lien vers le bon dashboard selon le rôle
+        // Link al dashboard corretto in base al ruolo
         dashboardLink() {
             if (this.user?.ruolo === 'organizzatore') {
                 return '/dashboard/organizzatore'
@@ -98,7 +98,7 @@ export default {
     },
     
     methods: {
-        // Déconnexion
+        // Disconnessione
         logout() {
             authService.logout()
             this.isAuthenticated = false
@@ -106,19 +106,19 @@ export default {
             this.$router.push('/')
         },
         
-        // Vérifier l'état de connexion
+        // Verificare lo stato di connessione
         checkAuth() {
             this.isAuthenticated = authService.isAuthenticated()
             this.user = authService.getCurrentUser()
         }
     },
     
-    // Vérifier l'authentification au montage
+    // Verificare l'autenticazione al montaggio
     mounted() {
         this.checkAuth()
     },
     
-    // Re-vérifier quand la route change
+    // Ri-verificare quando la route cambia
     watch: {
         '$route'() {
             this.checkAuth()

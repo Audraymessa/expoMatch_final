@@ -1,13 +1,13 @@
 <!-- ============================================
-     CREATE EVENT VIEW - Créer un Événement
+     CREATE EVENT VIEW - Creare un Evento
      ============================================
-     Formulaire pour créer un nouvel événement
-     Réservé aux organizzatori
+     Formulario per creare un nuovo evento
+     Riservato agli organizzatori
 -->
 
 <template>
     <div class="container py-4">
-        <!-- Lien retour -->
+        <!-- Link di ritorno -->
         <RouterLink to="/dashboard/organizzatore" class="text-primary text-decoration-none mb-4 d-inline-block">
             <i class="bi bi-arrow-left me-2"></i>Torna al Dashboard
         </RouterLink>
@@ -17,14 +17,14 @@
                 <div class="form-container">
                     <h2 class="mb-4">Crea Nuovo Evento</h2>
                     
-                    <!-- Message d'erreur -->
+                    <!-- Messaggio di errore -->
                     <div v-if="error" class="alert alert-danger">
                         {{ error }}
                     </div>
                     
-                    <!-- Formulaire -->
+                    <!-- Formulario -->
                     <form @submit.prevent="handleSubmit">
-                        <!-- Titre -->
+                        <!-- Titolo -->
                         <div class="mb-3">
                             <label class="form-label">Titolo Evento *</label>
                             <input 
@@ -36,7 +36,7 @@
                             >
                         </div>
                         
-                        <!-- Description -->
+                        <!-- Descrizione -->
                         <div class="mb-3">
                             <label class="form-label">Descrizione *</label>
                             <textarea 
@@ -48,7 +48,7 @@
                             ></textarea>
                         </div>
                         
-                        <!-- Adresse et Ville -->
+                        <!-- Indirizzo e Città -->
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Indirizzo completo</label>
@@ -71,7 +71,7 @@
                             </div>
                         </div>
                         
-                        <!-- Date et Prix -->
+                        <!-- Data e Prezzo -->
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Data Evento *</label>
@@ -95,7 +95,7 @@
                             </div>
                         </div>
                         
-                        <!-- Nombre de places et Dimensions -->
+                        <!-- Numero posti e Dimensioni -->
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Numero Posti Disponibili *</label>
@@ -119,11 +119,11 @@
                             </div>
                         </div>
                         
-                        <!-- Upload d'image -->
+                        <!-- Upload immagine -->
                         <div class="mb-3">
                             <label class="form-label">Immagine dell'evento</label>
                             
-                            <!-- Zone d'upload -->
+                            <!-- Zona di upload -->
                             <div 
                                 class="upload-zone"
                                 :class="{ 'has-image': imagePreview }"
@@ -139,10 +139,10 @@
                                     hidden
                                 >
                                 
-                                <!-- Aperçu de l'image -->
+                                <!-- Anteprima immagine -->
                                 <img v-if="imagePreview" :src="imagePreview" class="preview-image">
                                 
-                                <!-- Message par défaut -->
+                                <!-- Messaggio predefinito -->
                                 <div v-else class="upload-placeholder">
                                     <i class="bi bi-cloud-upload display-4"></i>
                                     <p class="mb-0 mt-2">Clicca o trascina un'immagine</p>
@@ -150,7 +150,7 @@
                                 </div>
                             </div>
                             
-                            <!-- Bouton supprimer -->
+                            <!-- Pulsante rimuovi -->
                             <button 
                                 v-if="imagePreview" 
                                 type="button" 
@@ -160,7 +160,7 @@
                                 <i class="bi bi-trash me-1"></i>Rimuovi immagine
                             </button>
                             
-                            <!-- Message de chargement -->
+                            <!-- Messaggio di caricamento -->
                             <div v-if="uploadingImage" class="text-center mt-2">
                                 <div class="spinner-border spinner-border-sm text-primary"></div>
                                 <span class="ms-2">Caricamento...</span>
@@ -194,7 +194,7 @@
                             >
                         </div>
                         
-                        <!-- Boutons -->
+                        <!-- Pulsanti -->
                         <div class="d-flex gap-3">
                             <RouterLink to="/dashboard/organizzatore" class="btn btn-outline-secondary">
                                 Annulla
@@ -237,13 +237,13 @@ export default {
             },
             loading: false,
             error: null,
-            imagePreview: null,      // Aperçu de l'image
-            uploadingImage: false    // État de chargement
+            imagePreview: null,      // Anteprima immagine
+            uploadingImage: false    // Stato di caricamento
         }
     },
     
     methods: {
-        // Gérer la sélection de fichier
+        // Gestire la selezione del file
         async handleFileSelect(event) {
             const file = event.target.files[0];
             if (file) {
@@ -251,7 +251,7 @@ export default {
             }
         },
         
-        // Gérer le drag & drop
+        // Gestire il drag & drop
         async handleDrop(event) {
             const file = event.dataTransfer.files[0];
             if (file && file.type.startsWith('image/')) {
@@ -259,16 +259,16 @@ export default {
             }
         },
         
-        // Uploader l'image vers le serveur
+        // Caricare l'immagine sul server
         async uploadImage(file) {
             try {
                 this.uploadingImage = true;
                 
-                // Créer un FormData pour envoyer le fichier
+                // Creare un FormData per inviare il file
                 const formData = new FormData();
                 formData.append('image', file);
                 
-                // Envoyer au serveur
+                // Inviare al server
                 const response = await fetch('http://localhost:3000/api/upload', {
                     method: 'POST',
                     body: formData
@@ -277,23 +277,23 @@ export default {
                 const data = await response.json();
                 
                 if (response.ok) {
-                    // Stocker l'URL de l'image
+                    // Memorizzare l'URL dell'immagine
                     this.form.immagine = data.imageUrl;
-                    // Afficher l'aperçu
+                    // Mostrare l'anteprima
                     this.imagePreview = data.imageUrl;
                 } else {
                     alert('Errore: ' + data.error);
                 }
                 
             } catch (err) {
-                console.error('Erreur upload:', err);
+                console.error('Errore upload:', err);
                 alert('Errore nel caricamento dell\'immagine');
             } finally {
                 this.uploadingImage = false;
             }
         },
         
-        // Supprimer l'image
+        // Rimuovere l'immagine
         removeImage() {
             this.form.immagine = '';
             this.imagePreview = null;
@@ -307,23 +307,23 @@ export default {
                 this.loading = true
                 this.error = null
                 
-                // Filtrer les requisiti vides
+                // Filtrare i requisiti vuoti
                 const requisiti = this.form.requisiti.filter(r => r.trim() !== '')
                 
-                // Préparer les données
+                // Preparare i dati
                 const eventData = {
                     ...this.form,
                     requisiti: requisiti.length > 0 ? requisiti : null
                 }
                 
-                // Appel API
+                // Chiamata API
                 await eventService.create(eventData)
                 
-                // Rediriger vers le dashboard
+                // Reindirizzare al dashboard
                 this.$router.push('/dashboard/organizzatore')
                 
             } catch (err) {
-                console.error('Erreur création événement:', err)
+                console.error('Errore creazione evento:', err)
                 this.error = err.response?.data?.error || 'Errore nella creazione dell\'evento.'
             } finally {
                 this.loading = false

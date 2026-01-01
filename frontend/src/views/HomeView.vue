@@ -1,10 +1,10 @@
 <!-- ============================================
-     HOME VIEW - Page d'Accueil
+     HOME VIEW - Pagina Principale
      ============================================
-     Page principale de l'application avec:
-     - Hero section (bannière avec recherche)
-     - Liste des événements disponibles
-     - Section "Chi Siamo"
+     Pagina principale dell'applicazione con:
+     - Sezione Hero (banner con ricerca)
+     - Elenco degli eventi disponibili
+     - Sezione "Chi Siamo"
 -->
 
 <template>
@@ -18,7 +18,7 @@
                     mercatini, fiere, festival e trova lo spazio ideale per il tuo business.
                 </p>
                 
-                <!-- Barre de recherche -->
+                <!-- Barra di ricerca -->
                 <div class="search-container">
                     <div class="input-group">
                         <input 
@@ -34,7 +34,7 @@
                     </div>
                 </div>
                 
-                <!-- Statistiques -->
+                <!-- Statistiche -->
                 <div class="stats-container">
                     <div class="stat-item">
                         <div class="stat-number">150+</div>
@@ -52,25 +52,25 @@
             </div>
         </section>
         
-        <!-- ========== LISTE DES ÉVÉNEMENTS ========== -->
+        <!-- ========== ELENCO DEGLI EVENTI ========== -->
         <section class="py-5">
             <div class="container">
                 <h2 class="mb-2">Eventi Disponibili</h2>
                 <p class="text-muted mb-4">{{ events.length }} eventi trovati</p>
                 
-                <!-- Message de chargement -->
+                <!-- Messaggio di caricamento -->
                 <div v-if="loading" class="text-center py-5">
                     <div class="spinner-border text-primary" role="status">
                         <span class="visually-hidden">Caricamento...</span>
                     </div>
                 </div>
                 
-                <!-- Message d'erreur -->
+                <!-- Messaggio di errore -->
                 <div v-else-if="error" class="alert alert-danger">
                     {{ error }}
                 </div>
                 
-                <!-- Grille des événements -->
+                <!-- Griglia degli eventi -->
                 <div v-else class="row g-4">
                     <div 
                         v-for="event in events" 
@@ -80,7 +80,7 @@
                         <EventCard :event="event" />
                     </div>
                     
-                    <!-- Message si aucun événement -->
+                    <!-- Messaggio se nessun evento -->
                     <div v-if="events.length === 0" class="col-12 text-center py-5">
                         <i class="bi bi-calendar-x display-4 text-muted"></i>
                         <p class="text-muted mt-3">Nessun evento trovato</p>
@@ -89,7 +89,7 @@
             </div>
         </section>
         
-        <!-- ========== SECTION CHI SIAMO ========== -->
+        <!-- ========== SEZIONE CHI SIAMO ========== -->
         <section id="chi-siamo" class="about-section bg-white">
             <div class="container">
                 <h2 class="mb-4">Chi Siamo</h2>
@@ -148,37 +148,37 @@ export default {
     
     data() {
         return {
-            events: [],           // Liste des événements
-            loading: true,        // État de chargement
-            error: null,          // Message d'erreur
-            searchQuery: ''       // Recherche
+            events: [],           // Elenco degli eventi
+            loading: true,        // Stato di caricamento
+            error: null,          // Messaggio di errore
+            searchQuery: ''       // Ricerca
         }
     },
     
     methods: {
-        // Charger les événements depuis l'API
+        // Caricare gli eventi dall'API
         async loadEvents() {
             try {
                 this.loading = true
                 this.error = null
                 this.events = await eventService.getAll()
             } catch (err) {
-                console.error('Erreur chargement événements:', err)
+                console.error('Errore caricamento eventi:', err)
                 this.error = 'Impossibile caricare gli eventi. Riprova più tardi.'
             } finally {
                 this.loading = false
             }
         },
         
-        // Rechercher des événements
+        // Cercare eventi
         async searchEvents() {
             try {
                 this.loading = true
                 this.error = null
-                // Recherche par ville
+                // Ricerca per città
                 this.events = await eventService.getAll({ citta: this.searchQuery })
             } catch (err) {
-                console.error('Erreur recherche:', err)
+                console.error('Errore ricerca:', err)
                 this.error = 'Errore nella ricerca.'
             } finally {
                 this.loading = false
@@ -186,7 +186,7 @@ export default {
         }
     },
     
-    // Charger les événements au montage du composant
+    // Caricare gli eventi al montaggio del componente
     mounted() {
         this.loadEvents()
     }

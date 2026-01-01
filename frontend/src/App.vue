@@ -1,35 +1,35 @@
 <!-- ============================================
-     APP.VUE - Composant Racine de l'Application
+     APP.VUE - Componente Radice dell'Applicazione
      ============================================
-     Ce composant contient la structure globale:
-     - Navbar (navigation)
-     - RouterView (contenu de la page actuelle)
+     Questo componente contiene la struttura globale:
+     - Navbar (navigazione)
+     - RouterView (contenuto della pagina corrente)
      - Footer
 -->
 
 <template>
     <div id="app">
-        <!-- Barre de navigation -->
+        <!-- Barra di navigazione -->
         <Navbar />
         
-        <!-- Contenu principal (change selon la route) -->
+        <!-- Contenuto principale (cambia in base alla route) -->
         <main>
             <RouterView />
         </main>
         
-        <!-- Pied de page -->
+        <!-- Piè di pagina -->
         <Footer />
     </div>
 </template>
 
 <script>
-// Importation des composants
+// Importazione dei componenti
 import Navbar from './components/Navbar.vue'
 import Footer from './components/Footer.vue'
 
 export default {
     name: 'App',
-    // Déclaration des composants utilisés
+    // Dichiarazione dei componenti utilizzati
     components: {
         Navbar,
         Footer
@@ -38,7 +38,7 @@ export default {
 </script>
 
 <style>
-/* Style global pour l'app */
+/* Stile globale per l'app */
 #app {
     display: flex;
     flex-direction: column;

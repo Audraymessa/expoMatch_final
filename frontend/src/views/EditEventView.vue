@@ -1,18 +1,18 @@
 <!-- ============================================
-     EDIT EVENT VIEW - Modifier un Événement
+     EDIT EVENT VIEW - Modificare un Evento
      ============================================
-     Formulaire pour modifier un événement existant
-     Réservé aux organizzatori (propriétaire)
+     Formulario per modificare un evento esistente
+     Riservato agli organizzatori (proprietario)
 -->
 
 <template>
     <div class="container py-4">
-        <!-- Lien retour -->
+        <!-- Link di ritorno -->
         <RouterLink to="/dashboard/organizzatore" class="text-primary text-decoration-none mb-4 d-inline-block">
             <i class="bi bi-arrow-left me-2"></i>Torna al Dashboard
         </RouterLink>
         
-        <!-- Chargement -->
+        <!-- Caricamento -->
         <div v-if="loadingEvent" class="text-center py-5">
             <div class="spinner-border text-primary" role="status"></div>
         </div>
@@ -22,14 +22,14 @@
                 <div class="form-container">
                     <h2 class="mb-4">Modifica Evento</h2>
                     
-                    <!-- Message d'erreur -->
+                    <!-- Messaggio di errore -->
                     <div v-if="error" class="alert alert-danger">
                         {{ error }}
                     </div>
                     
-                    <!-- Formulaire -->
+                    <!-- Formulario -->
                     <form @submit.prevent="handleSubmit">
-                        <!-- Titre -->
+                        <!-- Titolo -->
                         <div class="mb-3">
                             <label class="form-label">Titolo Evento *</label>
                             <input 
@@ -40,7 +40,7 @@
                             >
                         </div>
                         
-                        <!-- Description -->
+                        <!-- Descrizione -->
                         <div class="mb-3">
                             <label class="form-label">Descrizione *</label>
                             <textarea 
@@ -51,7 +51,7 @@
                             ></textarea>
                         </div>
                         
-                        <!-- Adresse et Ville -->
+                        <!-- Indirizzo e Città -->
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Indirizzo completo</label>
@@ -72,7 +72,7 @@
                             </div>
                         </div>
                         
-                        <!-- Date et Prix -->
+                        <!-- Data e Prezzo -->
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Data Evento *</label>
@@ -95,7 +95,7 @@
                             </div>
                         </div>
                         
-                        <!-- Nombre de places et Dimensions -->
+                        <!-- Numero posti e Dimensioni -->
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Numero Posti Totali *</label>
@@ -117,7 +117,7 @@
                             </div>
                         </div>
                         
-                        <!-- URL Image -->
+                        <!-- URL Immagine -->
                         <div class="mb-3">
                             <label class="form-label">URL Immagine</label>
                             <input 
@@ -151,7 +151,7 @@
                             >
                         </div>
                         
-                        <!-- Boutons -->
+                        <!-- Pulsanti -->
                         <div class="d-flex gap-3">
                             <RouterLink to="/dashboard/organizzatore" class="btn btn-outline-secondary">
                                 Annulla
@@ -199,18 +199,18 @@ export default {
     },
     
     methods: {
-        // Charger l'événement existant
+        // Caricare l'evento esistente
         async loadEvent() {
             try {
                 this.loadingEvent = true
                 const id = this.$route.params.id
                 const event = await eventService.getById(id)
                 
-                // Remplir le formulaire
+                // Compilare il formulario
                 this.form = {
                     titolo: event.titolo,
                     descrizione: event.descrizione,
-                    data_evento: event.data_evento.split('T')[0], // Format YYYY-MM-DD
+                    data_evento: event.data_evento.split('T')[0], // Formato YYYY-MM-DD
                     citta: event.citta,
                     indirizzo: event.indirizzo,
                     prezzo: event.prezzo,
@@ -224,14 +224,14 @@ export default {
                     ]
                 }
             } catch (err) {
-                console.error('Erreur chargement événement:', err)
+                console.error('Errore caricamento evento:', err)
                 this.error = 'Impossibile caricare l\'evento.'
             } finally {
                 this.loadingEvent = false
             }
         },
         
-        // Soumettre les modifications
+        // Inviare le modifiche
         async handleSubmit() {
             try {
                 this.loading = true
@@ -249,7 +249,7 @@ export default {
                 this.$router.push('/dashboard/organizzatore')
                 
             } catch (err) {
-                console.error('Erreur modification:', err)
+                console.error('Errore modifica:', err)
                 this.error = err.response?.data?.error || 'Errore nella modifica dell\'evento.'
             } finally {
                 this.loading = false

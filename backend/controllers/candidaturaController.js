@@ -1,24 +1,24 @@
 // ============================================
-// CONTROLLER DES CANDIDATURES
+// CONTROLLER DELLE CANDIDATURE
 // ============================================
-// Gère les candidatures des venditori aux eventi
-// Permet aux organizzatori d'approuver/refuser les demandes
+// Gestisce le candidature dei venditori agli eventi
+// Permette agli organizzatori di approvare/rifiutare le richieste
 
 const { pool } = require('../config/database');
 
 // ============================================
-// CREATE CANDIDATURA - Postuler à un événement
+// CREATE CANDIDATURA - Candidarsi a un evento
 // ============================================
 // POST /api/candidature
-// Réservé aux venditori
-// Body: { evento_id, messaggio (optionnel) }
+// Riservato ai venditori
+// Body: { evento_id, messaggio (opzionale) }
 
 const createCandidatura = async (req, res) => {
     try {
         const { evento_id, messaggio } = req.body;
         const venditore_id = req.user.id;
 
-        // Vérifier que l'événement existe et a des places disponibles
+        // Verificare che l'evento esista e abbia posti disponibili
         const [events] = await pool.query(
             'SELECT * FROM eventi WHERE id = ? AND posti_disponibili > 0',
             [evento_id]
@@ -30,7 +30,7 @@ const createCandidatura = async (req, res) => {
             });
         }
 
-        // Vérifier que le venditore n'a pas déjà postulé
+        // Verificare che il venditore non abbia già inviato una candidatura
         const [existing] = await pool.query(
             'SELECT * FROM candidature WHERE evento_id = ? AND venditore_id = ?',
             [evento_id, venditore_id]
@@ -42,7 +42,7 @@ const createCandidatura = async (req, res) => {
             });
         }
 
-        // Créer la candidature
+        // Creare la candidatura
         const [result] = await pool.query(
             'INSERT INTO candidature (evento_id, venditore_id, messaggio) VALUES (?, ?, ?)',
             [evento_id, venditore_id, messaggio || null]
@@ -58,7 +58,7 @@ const createCandidatura = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Erreur createCandidatura:', error);
+        console.error('Errore createCandidatura:', error);
         res.status(500).json({ 
             error: 'Errore nell\'invio della candidatura.' 
         });
@@ -66,10 +66,10 @@ const createCandidatura = async (req, res) => {
 };
 
 // ============================================
-// GET MY CANDIDATURE - Candidatures du venditore connecté
+// GET MY CANDIDATURE - Candidature del venditore connesso
 // ============================================
 // GET /api/candidature/mie
-// Réservé aux venditori
+// Riservato ai venditori
 
 const getMyCandidature = async (req, res) => {
     try {
@@ -87,7 +87,7 @@ const getMyCandidature = async (req, res) => {
         res.json(candidature);
 
     } catch (error) {
-        console.error('Erreur getMyCandidature:', error);
+        console.error('Errore getMyCandidature:', error);
         res.status(500).json({ 
             error: 'Errore nel recupero delle candidature.' 
         });
@@ -95,17 +95,17 @@ const getMyCandidature = async (req, res) => {
 };
 
 // ============================================
-// GET EVENT CANDIDATURE - Candidatures d'un événement
+// GET EVENT CANDIDATURE - Candidature di un evento
 // ============================================
 // GET /api/candidature/evento/:evento_id
-// Réservé à l'organizzatore propriétaire de l'événement
+// Riservato all'organizzatore proprietario dell'evento
 
 const getEventCandidature = async (req, res) => {
     try {
         const { evento_id } = req.params;
         const organizzatore_id = req.user.id;
 
-        // Vérifier que l'événement appartient à l'organizzatore
+        // Verificare che l'evento appartenga all'organizzatore
         const [events] = await pool.query(
             'SELECT * FROM eventi WHERE id = ? AND organizzatore_id = ?',
             [evento_id, organizzatore_id]
@@ -117,7 +117,7 @@ const getEventCandidature = async (req, res) => {
             });
         }
 
-        // Récupérer les candidatures avec les infos des venditori
+        // Recuperare le candidature con le informazioni dei venditori
         const [candidature] = await pool.query(
             `SELECT c.*, u.nome as venditore_nome, u.email as venditore_email, 
                     u.telefono as venditore_telefono, u.descrizione as venditore_descrizione
@@ -131,7 +131,7 @@ const getEventCandidature = async (req, res) => {
         res.json(candidature);
 
     } catch (error) {
-        console.error('Erreur getEventCandidature:', error);
+        console.error('Errore getEventCandidature:', error);
         res.status(500).json({ 
             error: 'Errore nel recupero delle candidature.' 
         });
@@ -139,10 +139,10 @@ const getEventCandidature = async (req, res) => {
 };
 
 // ============================================
-// UPDATE CANDIDATURA STATUS - Approuver/Refuser
+// UPDATE CANDIDATURA STATUS - Approvare/Rifiutare
 // ============================================
 // PUT /api/candidature/:id
-// Réservé à l'organizzatore propriétaire de l'événement
+// Riservato all'organizzatore proprietario dell'evento
 // Body: { stato: 'approvata' | 'rifiutata' }
 
 const updateCandidaturaStatus = async (req, res) => {
@@ -151,14 +151,14 @@ const updateCandidaturaStatus = async (req, res) => {
         const { stato } = req.body;
         const organizzatore_id = req.user.id;
 
-        // Vérifier que le stato est valide
+        // Verificare che lo stato sia valido
         if (!['approvata', 'rifiutata'].includes(stato)) {
             return res.status(400).json({ 
                 error: 'Stato non valido. Usare approvata o rifiutata.' 
             });
         }
 
-        // Récupérer la candidature et vérifier les droits
+        // Recuperare la candidatura e verificare i diritti
         const [candidature] = await pool.query(
             `SELECT c.*, e.organizzatore_id, e.posti_disponibili
              FROM candidature c
@@ -179,7 +179,7 @@ const updateCandidaturaStatus = async (req, res) => {
             });
         }
 
-        // Si on approuve, vérifier qu'il y a des places et les décrémenter
+        // Se si approva, verificare che ci siano posti e decrementarli
         if (stato === 'approvata') {
             if (candidature[0].posti_disponibili <= 0) {
                 return res.status(400).json({ 
@@ -187,14 +187,14 @@ const updateCandidaturaStatus = async (req, res) => {
                 });
             }
 
-            // Décrémenter les places disponibles
+            // Decrementare i posti disponibili
             await pool.query(
                 'UPDATE eventi SET posti_disponibili = posti_disponibili - 1 WHERE id = ?',
                 [candidature[0].evento_id]
             );
         }
 
-        // Si on refuse une candidature précédemment approuvée, réincrémenter
+        // Se si rifiuta una candidatura precedentemente approvata, reincrementare
         if (stato === 'rifiutata' && candidature[0].stato === 'approvata') {
             await pool.query(
                 'UPDATE eventi SET posti_disponibili = posti_disponibili + 1 WHERE id = ?',
@@ -202,7 +202,7 @@ const updateCandidaturaStatus = async (req, res) => {
             );
         }
 
-        // Mettre à jour le statut
+        // Aggiornare lo stato
         await pool.query(
             'UPDATE candidature SET stato = ? WHERE id = ?',
             [stato, id]
@@ -213,7 +213,7 @@ const updateCandidaturaStatus = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Erreur updateCandidaturaStatus:', error);
+        console.error('Errore updateCandidaturaStatus:', error);
         res.status(500).json({ 
             error: 'Errore nell\'aggiornamento della candidatura.' 
         });
@@ -221,17 +221,17 @@ const updateCandidaturaStatus = async (req, res) => {
 };
 
 // ============================================
-// DELETE CANDIDATURA - Retirer sa candidature
+// DELETE CANDIDATURA - Ritirare la propria candidatura
 // ============================================
 // DELETE /api/candidature/:id
-// Réservé au venditore propriétaire de la candidature
+// Riservato al venditore proprietario della candidatura
 
 const deleteCandidatura = async (req, res) => {
     try {
         const { id } = req.params;
         const venditore_id = req.user.id;
 
-        // Vérifier et récupérer la candidature
+        // Verificare e recuperare la candidatura
         const [candidature] = await pool.query(
             'SELECT * FROM candidature WHERE id = ? AND venditore_id = ?',
             [id, venditore_id]
@@ -243,7 +243,7 @@ const deleteCandidatura = async (req, res) => {
             });
         }
 
-        // Si la candidature était approuvée, réincrémenter les places
+        // Se la candidatura era approvata, reincrementare i posti
         if (candidature[0].stato === 'approvata') {
             await pool.query(
                 'UPDATE eventi SET posti_disponibili = posti_disponibili + 1 WHERE id = ?',
@@ -251,13 +251,13 @@ const deleteCandidatura = async (req, res) => {
             );
         }
 
-        // Supprimer la candidature
+        // Eliminare la candidatura
         await pool.query('DELETE FROM candidature WHERE id = ?', [id]);
 
         res.json({ message: 'Candidatura ritirata con successo!' });
 
     } catch (error) {
-        console.error('Erreur deleteCandidatura:', error);
+        console.error('Errore deleteCandidatura:', error);
         res.status(500).json({ 
             error: 'Errore nell\'eliminazione della candidatura.' 
         });

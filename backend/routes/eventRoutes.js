@@ -1,13 +1,13 @@
 // ============================================
-// ROUTES DES ÉVÉNEMENTS
+// ROUTE DEGLI EVENTI
 // ============================================
-// Définit les endpoints CRUD pour les eventi
-// Préfixe: /api/eventi
+// Definisce gli endpoint CRUD per gli eventi
+// Prefisso: /api/eventi
 
 const express = require('express');
 const router = express.Router();
 
-// Importer le controller et les middlewares
+// Importare il controller e i middleware
 const { 
     getAllEvents, 
     getEventById, 
@@ -20,37 +20,37 @@ const {
 const { verifyToken, isOrganizzatore } = require('../middleware/authMiddleware');
 
 // ============================================
-// ROUTES PUBLIQUES (accessibles à tous)
+// ROUTE PUBBLICHE (accessibili a tutti)
 // ============================================
 
-// GET /api/eventi - Liste tous les événements
-// Query params optionnels: ?citta=Milano&data=2025-12-15
+// GET /api/eventi - Elenco di tutti gli eventi
+// Query params opzionali: ?citta=Milano&data=2025-12-15
 router.get('/', getAllEvents);
 
-// GET /api/eventi/:id - Détail d'un événement spécifique
+// GET /api/eventi/:id - Dettaglio di un evento specifico
 router.get('/:id', getEventById);
 
 // ============================================
-// ROUTES PROTÉGÉES - ORGANIZZATORI UNIQUEMENT
+// ROUTE PROTETTE - SOLO ORGANIZZATORI
 // ============================================
-// Ces routes nécessitent:
-// 1. Un token JWT valide (verifyToken)
-// 2. Le rôle "organizzatore" (isOrganizzatore)
+// Queste route richiedono:
+// 1. Un token JWT valido (verifyToken)
+// 2. Il ruolo "organizzatore" (isOrganizzatore)
 
-// GET /api/eventi/miei/lista - Mes événements (organizzatore)
-// Note: Cette route doit être avant /:id pour éviter conflit
+// GET /api/eventi/miei/lista - I miei eventi (organizzatore)
+// Nota: Questa route deve essere prima di /:id per evitare conflitti
 router.get('/miei/lista', verifyToken, isOrganizzatore, getMyEvents);
 
-// POST /api/eventi - Créer un nouvel événement
-// Body attendu: { titolo, descrizione, data_evento, citta, indirizzo, prezzo, posti_totali, ... }
+// POST /api/eventi - Creare un nuovo evento
+// Body atteso: { titolo, descrizione, data_evento, citta, indirizzo, prezzo, posti_totali, ... }
 router.post('/', verifyToken, isOrganizzatore, createEvent);
 
-// PUT /api/eventi/:id - Modifier un événement existant
-// Seul le propriétaire peut modifier son événement
+// PUT /api/eventi/:id - Modificare un evento esistente
+// Solo il proprietario può modificare il suo evento
 router.put('/:id', verifyToken, isOrganizzatore, updateEvent);
 
-// DELETE /api/eventi/:id - Supprimer un événement
-// Seul le propriétaire peut supprimer son événement
+// DELETE /api/eventi/:id - Eliminare un evento
+// Solo il proprietario può eliminare il suo evento
 router.delete('/:id', verifyToken, isOrganizzatore, deleteEvent);
 
 module.exports = router;

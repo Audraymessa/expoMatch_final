@@ -1,13 +1,13 @@
 // ============================================
-// CONFIGURATION DU ROUTER VUE
+// CONFIGURAZIONE DEL ROUTER VUE
 // ============================================
-// Le router gère la navigation entre les différentes pages
-// Chaque route correspond à une URL et un composant Vue
+// Il router gestisce la navigazione tra le diverse pagine
+// Ogni route corrisponde a un URL e un componente Vue
 
 import { createRouter, createWebHistory } from 'vue-router'
 
 // ============================================
-// IMPORTATION DES VUES (Pages)
+// IMPORTAZIONE DELLE VISTE (Pagine)
 // ============================================
 import HomeView from '../views/HomeView.vue'
 import EventDetailView from '../views/EventDetailView.vue'
@@ -20,42 +20,42 @@ import EditEventView from '../views/EditEventView.vue'
 import CandidatureEventView from '../views/CandidatureEventView.vue'
 
 // ============================================
-// DÉFINITION DES ROUTES
+// DEFINIZIONE DELLE ROUTE
 // ============================================
 const routes = [
-    // ----- ROUTES PUBLIQUES -----
+    // ----- ROUTE PUBBLICHE -----
     
-    // Page d'accueil
+    // Pagina principale
     {
         path: '/',
         name: 'Home',
         component: HomeView
     },
     
-    // Détail d'un événement
+    // Dettaglio di un evento
     {
         path: '/evento/:id',
         name: 'EventDetail',
         component: EventDetailView
     },
     
-    // Page de connexion
+    // Pagina di accesso
     {
         path: '/login',
         name: 'Login',
         component: LoginView
     },
     
-    // Page d'inscription
+    // Pagina di registrazione
     {
         path: '/register',
         name: 'Register',
         component: RegisterView
     },
     
-    // ----- ROUTES PROTÉGÉES (ORGANIZZATORE) -----
+    // ----- ROUTE PROTETTE (ORGANIZZATORE) -----
     
-    // Dashboard de l'organizzatore
+    // Dashboard dell'organizzatore
     {
         path: '/dashboard/organizzatore',
         name: 'DashboardOrganizzatore',
@@ -63,7 +63,7 @@ const routes = [
         meta: { requiresAuth: true, role: 'organizzatore' }
     },
     
-    // Créer un événement
+    // Creare un evento
     {
         path: '/evento/nuovo',
         name: 'CreateEvent',
@@ -71,7 +71,7 @@ const routes = [
         meta: { requiresAuth: true, role: 'organizzatore' }
     },
     
-    // Modifier un événement
+    // Modificare un evento
     {
         path: '/evento/modifica/:id',
         name: 'EditEvent',
@@ -79,7 +79,7 @@ const routes = [
         meta: { requiresAuth: true, role: 'organizzatore' }
     },
     
-    // Voir les candidatures d'un événement
+    // Vedere le candidature di un evento
     {
         path: '/evento/:id/candidature',
         name: 'CandidatureEvent',
@@ -87,9 +87,9 @@ const routes = [
         meta: { requiresAuth: true, role: 'organizzatore' }
     },
     
-    // ----- ROUTES PROTÉGÉES (VENDITORE) -----
+    // ----- ROUTE PROTETTE (VENDITORE) -----
     
-    // Dashboard du venditore
+    // Dashboard del venditore
     {
         path: '/dashboard/venditore',
         name: 'DashboardVenditore',
@@ -99,36 +99,36 @@ const routes = [
 ]
 
 // ============================================
-// CRÉATION DU ROUTER
+// CREAZIONE DEL ROUTER
 // ============================================
 const router = createRouter({
-    // Mode "history" pour des URLs propres (sans #)
+    // Modalità "history" per URL puliti (senza #)
     history: createWebHistory(),
     routes
 })
 
 // ============================================
-// GARDE DE NAVIGATION (Navigation Guard)
+// GUARDIA DI NAVIGAZIONE (Navigation Guard)
 // ============================================
-// Vérifie l'authentification avant chaque navigation
+// Verifica l'autenticazione prima di ogni navigazione
 
 router.beforeEach((to, from, next) => {
-    // Récupérer le token et les infos utilisateur du localStorage
+    // Recuperare il token e le informazioni utente dal localStorage
     const token = localStorage.getItem('token')
     const user = JSON.parse(localStorage.getItem('user') || '{}')
     
-    // Si la route nécessite une authentification
+    // Se la route richiede autenticazione
     if (to.meta.requiresAuth) {
-        // Vérifier si l'utilisateur est connecté
+        // Verificare se l'utente è connesso
         if (!token) {
-            // Rediriger vers login
+            // Reindirizzare al login
             next({ name: 'Login', query: { redirect: to.fullPath } })
             return
         }
         
-        // Vérifier si l'utilisateur a le bon rôle
+        // Verificare se l'utente ha il ruolo corretto
         if (to.meta.role && user.ruolo !== to.meta.role) {
-            // Rediriger vers le bon dashboard
+            // Reindirizzare al dashboard corretto
             if (user.ruolo === 'organizzatore') {
                 next({ name: 'DashboardOrganizzatore' })
             } else {
@@ -138,7 +138,7 @@ router.beforeEach((to, from, next) => {
         }
     }
     
-    // Si déjà connecté et essaie d'accéder à login/register
+    // Se già connesso e tenta di accedere a login/register
     if ((to.name === 'Login' || to.name === 'Register') && token) {
         if (user.ruolo === 'organizzatore') {
             next({ name: 'DashboardOrganizzatore' })
@@ -148,7 +148,7 @@ router.beforeEach((to, from, next) => {
         return
     }
     
-    // Continuer la navigation
+    // Continuare la navigazione
     next()
 })
 

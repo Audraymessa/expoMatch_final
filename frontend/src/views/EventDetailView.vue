@@ -1,32 +1,32 @@
 <!-- ============================================
-     EVENT DETAIL VIEW - Détail d'un Événement
+     EVENT DETAIL VIEW - Dettaglio di un Evento
      ============================================
-     Affiche toutes les informations d'un événement
-     Permet aux venditori de postuler
+     Mostra tutte le informazioni di un evento
+     Permette ai venditori di candidarsi
 -->
 
 <template>
     <div class="container py-4">
-        <!-- Lien retour -->
+        <!-- Link di ritorno -->
         <RouterLink to="/" class="text-primary text-decoration-none mb-4 d-inline-block">
             <i class="bi bi-arrow-left me-2"></i>Torna agli eventi
         </RouterLink>
         
-        <!-- Chargement -->
+        <!-- Caricamento -->
         <div v-if="loading" class="text-center py-5">
             <div class="spinner-border text-primary" role="status"></div>
         </div>
         
-        <!-- Erreur -->
+        <!-- Errore -->
         <div v-else-if="error" class="alert alert-danger">
             {{ error }}
         </div>
         
-        <!-- Contenu -->
+        <!-- Contenuto -->
         <div v-else-if="event" class="row">
-            <!-- Colonne gauche: Image et infos -->
+            <!-- Colonna sinistra: Immagine e informazioni -->
             <div class="col-lg-8">
-                <!-- Image -->
+                <!-- Immagine -->
                 <img 
                     :src="event.immagine || defaultImage" 
                     :alt="event.titolo"
@@ -34,7 +34,7 @@
                     @error="handleImageError"
                 >
                 
-                <!-- Titre et infos principales -->
+                <!-- Titolo e informazioni principali -->
                 <div class="bg-white p-4 rounded border mb-4">
                     <h1 class="h3 mb-4">{{ event.titolo }}</h1>
                     
@@ -85,7 +85,7 @@
                     </div>
                 </div>
                 
-                <!-- Description -->
+                <!-- Descrizione -->
                 <div class="bg-white p-4 rounded border mb-4">
                     <h5 class="mb-3">Descrizione</h5>
                     <p>{{ event.descrizione }}</p>
@@ -103,12 +103,12 @@
                 </div>
             </div>
             
-            <!-- Colonne droite: Box candidature -->
+            <!-- Colonna destra: Box candidatura -->
             <div class="col-lg-4">
                 <div class="candidatura-box sticky-top" style="top: 100px;">
                     <h5 class="mb-3">Candidati per questo evento</h5>
                     
-                    <!-- Si non connecté -->
+                    <!-- Se non connesso -->
                     <div v-if="!isAuthenticated">
                         <p class="text-muted">
                             Devi effettuare l'accesso per candidarti a questo evento
@@ -118,16 +118,16 @@
                         </RouterLink>
                     </div>
                     
-                    <!-- Si connecté comme organizzatore -->
+                    <!-- Se connesso come organizzatore -->
                     <div v-else-if="user?.ruolo === 'organizzatore'">
                         <p class="text-muted">
                             Solo i venditori possono candidarsi agli eventi.
                         </p>
                     </div>
                     
-                    <!-- Si connecté comme venditore -->
+                    <!-- Se connesso come venditore -->
                     <div v-else>
-                        <!-- Message succès/erreur -->
+                        <!-- Messaggio successo/errore -->
                         <div v-if="candidaturaSuccess" class="alert alert-success">
                             {{ candidaturaSuccess }}
                         </div>
@@ -135,7 +135,7 @@
                             {{ candidaturaError }}
                         </div>
                         
-                        <!-- Formulaire de candidature -->
+                        <!-- Formulario di candidatura -->
                         <div v-if="!candidaturaSuccess">
                             <div class="mb-3">
                                 <label class="form-label">Messaggio (opzionale)</label>
@@ -176,11 +176,11 @@ export default {
             error: null,
             defaultImage: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800',
             
-            // Authentification
+            // Autenticazione
             isAuthenticated: false,
             user: null,
             
-            // Candidature
+            // Candidatura
             candidaturaMessage: '',
             candidaturaLoading: false,
             candidaturaSuccess: null,
@@ -189,7 +189,7 @@ export default {
     },
     
     methods: {
-        // Charger l'événement
+        // Caricare l'evento
         async loadEvent() {
             try {
                 this.loading = true
@@ -197,14 +197,14 @@ export default {
                 const id = this.$route.params.id
                 this.event = await eventService.getById(id)
             } catch (err) {
-                console.error('Erreur chargement événement:', err)
+                console.error('Errore caricamento evento:', err)
                 this.error = 'Impossibile caricare l\'evento.'
             } finally {
                 this.loading = false
             }
         },
         
-        // Soumettre une candidature
+        // Inviare una candidatura
         async submitCandidatura() {
             try {
                 this.candidaturaLoading = true
@@ -218,14 +218,14 @@ export default {
                 this.candidaturaSuccess = 'Candidatura inviata con successo! Attendi la risposta dell\'organizzatore.'
                 
             } catch (err) {
-                console.error('Erreur candidature:', err)
+                console.error('Errore candidatura:', err)
                 this.candidaturaError = err.response?.data?.error || 'Errore nell\'invio della candidatura.'
             } finally {
                 this.candidaturaLoading = false
             }
         },
         
-        // Formater la date
+        // Formattare la data
         formatDate(dateString) {
             if (!dateString) return 'N/D'
             const date = new Date(dateString)
@@ -237,7 +237,7 @@ export default {
             })
         },
         
-        // Gérer erreur image
+        // Gestire errore immagine
         handleImageError(e) {
             e.target.src = this.defaultImage
         }

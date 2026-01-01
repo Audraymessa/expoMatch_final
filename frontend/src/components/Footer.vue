@@ -1,14 +1,14 @@
 <!-- ============================================
-     FOOTER - Pied de Page
+     FOOTER - Piè di Pagina
      ============================================
-     Composant simple pour le pied de page
+     Componente semplice per il piè di pagina
 -->
 
 <template>
     <footer class="bg-dark text-light py-4 mt-5">
         <div class="container">
             <div class="row">
-                <!-- Colonne logo et description -->
+                <!-- Colonna logo e descrizione -->
                 <div class="col-md-4 mb-3">
                     <h5>
                         <i class="bi bi-grid-3x3-gap-fill me-2" style="color: #4361ee;"></i>
@@ -19,7 +19,7 @@
                     </p>
                 </div>
                 
-                <!-- Colonne liens utiles -->
+                <!-- Colonna link utili -->
                 <div class="col-md-4 mb-3">
                     <h6>Link Utili</h6>
                     <ul class="list-unstyled">
@@ -29,7 +29,7 @@
                     </ul>
                 </div>
                 
-                <!-- Colonne contact -->
+                <!-- Colonna contatti -->
                 <div class="col-md-4 mb-3">
                     <h6>Contatti</h6>
                     <ul class="list-unstyled text-muted">

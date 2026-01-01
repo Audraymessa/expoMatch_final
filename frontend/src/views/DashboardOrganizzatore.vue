@@ -1,8 +1,8 @@
 <!-- ============================================
      DASHBOARD ORGANIZZATORE
      ============================================
-     Page privée pour les organizzatori
-     Affiche les statistiques et la liste des événements
+     Pagina privata per gli organizzatori
+     Mostra le statistiche e l'elenco degli eventi
 -->
 
 <template>
@@ -37,26 +37,26 @@
             </div>
         </div>
         
-        <!-- Bouton créer événement -->
+        <!-- Pulsante crea evento -->
         <RouterLink to="/evento/nuovo" class="btn btn-primary mb-4">
             <i class="bi bi-plus me-2"></i>Crea nuovo evento
         </RouterLink>
         
-        <!-- Tableau des événements -->
+        <!-- Tabella degli eventi -->
         <div class="table-container">
             <h5 class="p-3 mb-0 border-bottom">I MIEI EVENTI</h5>
             
-            <!-- Chargement -->
+            <!-- Caricamento -->
             <div v-if="loading" class="text-center py-5">
                 <div class="spinner-border text-primary" role="status"></div>
             </div>
             
-            <!-- Erreur -->
+            <!-- Errore -->
             <div v-else-if="error" class="alert alert-danger m-3">
                 {{ error }}
             </div>
             
-            <!-- Tableau -->
+            <!-- Tabella -->
             <div v-else-if="events.length > 0" class="table-responsive">
                 <table class="table table-hover mb-0">
                     <thead>
@@ -104,7 +104,7 @@
                 </table>
             </div>
             
-            <!-- Aucun événement -->
+            <!-- Nessun evento -->
             <div v-else class="text-center py-5">
                 <i class="bi bi-calendar-x display-4 text-muted"></i>
                 <p class="text-muted mt-3">Non hai ancora creato eventi</p>
@@ -132,33 +132,33 @@ export default {
     },
     
     computed: {
-        // Total des places
+        // Totale dei posti
         totalPosti() {
             return this.events.reduce((sum, e) => sum + (e.posti_totali || 0), 0)
         },
         
-        // Total des candidatures
+        // Totale delle candidature
         totalCandidature() {
             return this.events.reduce((sum, e) => sum + (e.num_candidature || 0), 0)
         }
     },
     
     methods: {
-        // Charger mes événements
+        // Caricare i miei eventi
         async loadEvents() {
             try {
                 this.loading = true
                 this.error = null
                 this.events = await eventService.getMyEvents()
             } catch (err) {
-                console.error('Erreur chargement événements:', err)
+                console.error('Errore caricamento eventi:', err)
                 this.error = 'Impossibile caricare gli eventi.'
             } finally {
                 this.loading = false
             }
         },
         
-        // Formater la date
+        // Formattare la data
         formatDate(dateString) {
             if (!dateString) return 'N/D'
             const date = new Date(dateString)
@@ -169,34 +169,34 @@ export default {
             })
         },
         
-        // Ouvrir modal de confirmation
+        // Aprire modal di conferma
         confirmDelete(event) {
             this.eventToDelete = event
             
-            // Utiliser une confirmation simple qui fonctionne toujours
+            // Usare una conferma semplice che funziona sempre
             if (confirm(`Sei sicuro di voler eliminare l'evento "${event.titolo}"?`)) {
                 this.deleteEvent()
             }
         },
         
-        // Supprimer l'événement
+        // Eliminare l'evento
         async deleteEvent() {
             if (!this.eventToDelete) return
             
             try {
                 await eventService.delete(this.eventToDelete.id)
                 
-                // Recharger la liste
+                // Ricaricare l'elenco
                 await this.loadEvents()
                 
-                // Message de succès
+                // Messaggio di successo
                 alert('✅ Evento eliminato con successo!')
                 
-                // Réinitialiser
+                // Reimpostare
                 this.eventToDelete = null
                 
             } catch (err) {
-                console.error('Erreur suppression:', err)
+                console.error('Errore eliminazione:', err)
                 const errorMsg = err.response?.data?.error || err.message || 'Errore sconosciuto'
                 alert('❌ Errore nell\'eliminazione dell\'evento:\n' + errorMsg)
             }

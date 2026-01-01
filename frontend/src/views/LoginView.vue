@@ -1,7 +1,7 @@
 <!-- ============================================
-     LOGIN VIEW - Page de Connexion
+     LOGIN VIEW - Pagina di Accesso
      ============================================
-     Formulaire de connexion pour les utilisateurs existants
+     Formulario di accesso per gli utenti esistenti
 -->
 
 <template>
@@ -11,12 +11,12 @@
                 <div class="form-container">
                     <h2 class="text-center mb-4">Accedi</h2>
                     
-                    <!-- Message d'erreur -->
+                    <!-- Messaggio di errore -->
                     <div v-if="error" class="alert alert-danger">
                         {{ error }}
                     </div>
                     
-                    <!-- Formulaire de connexion -->
+                    <!-- Formulario di accesso -->
                     <form @submit.prevent="handleLogin">
                         <!-- Email -->
                         <div class="mb-3">
@@ -42,7 +42,7 @@
                             >
                         </div>
                         
-                        <!-- Bouton de connexion -->
+                        <!-- Pulsante di accesso -->
                         <button 
                             type="submit" 
                             class="btn btn-primary w-100"
@@ -53,7 +53,7 @@
                         </button>
                     </form>
                     
-                    <!-- Lien vers inscription -->
+                    <!-- Link alla registrazione -->
                     <p class="text-center mt-4 mb-0">
                         Non hai un account? 
                         <RouterLink to="/register">Registrati</RouterLink>
@@ -87,10 +87,10 @@ export default {
                 this.loading = true
                 this.error = null
                 
-                // Appel API de connexion
+                // Chiamata API di accesso
                 const response = await authService.login(this.form)
                 
-                // Redirection vers le bon dashboard selon le rôle
+                // Reindirizzamento al dashboard corretto in base al ruolo
                 if (response.user.ruolo === 'organizzatore') {
                     this.$router.push('/dashboard/organizzatore')
                 } else {
@@ -98,9 +98,9 @@ export default {
                 }
                 
             } catch (err) {
-                console.error('Erreur login:', err)
+                console.error('Errore accesso:', err)
                 this.error = err.response?.data?.error || 'Email o password non corretti.'
-                // Afficher aussi dans une alerte pour être sûr
+                // Mostrare anche in un alert per sicurezza
                 alert('❌ ' + this.error)
             } finally {
                 this.loading = false

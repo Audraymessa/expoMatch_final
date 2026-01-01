@@ -1,9 +1,9 @@
 // ============================================
-// CONTROLLER D'AUTHENTIFICATION
+// CONTROLLER DI AUTENTICAZIONE
 // ============================================
-// Gère l'inscription et la connexion des utilisateurs
-// Utilise bcrypt pour hasher les mots de passe
-// Utilise JWT pour générer les tokens de session
+// Gestisce la registrazione e l'accesso degli utenti
+// Utilizza bcrypt per hashare le password
+// Utilizza JWT per generare i token di sessione
 
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -11,31 +11,31 @@ const { pool } = require('../config/database');
 require('dotenv').config();
 
 // ============================================
-// REGISTER - Inscription d'un nouvel utilisateur
+// REGISTER - Registrazione di un nuovo utente
 // ============================================
 // POST /api/auth/register
 // Body: { nome, email, password, ruolo }
 
 const register = async (req, res) => {
     try {
-        // 1. Extraire les données du body de la requête
+        // 1. Estrarre i dati dal body della richiesta
         const { nome, email, password, ruolo, telefono, descrizione } = req.body;
 
-        // 2. Validation des champs obligatoires
+        // 2. Validazione dei campi obbligatori
         if (!nome || !email || !password || !ruolo) {
             return res.status(400).json({ 
                 error: 'Tutti i campi obbligatori devono essere compilati.' 
             });
         }
 
-        // 3. Vérifier que le rôle est valide
+        // 3. Verificare che il ruolo sia valido
         if (!['organizzatore', 'venditore'].includes(ruolo)) {
             return res.status(400).json({ 
                 error: 'Ruolo non valido. Scegliere organizzatore o venditore.' 
             });
         }
 
-        // 4. Vérifier si l'email existe déjà
+        // 4. Verificare se l'email esiste già
         const [existingUser] = await pool.query(
             'SELECT id FROM users WHERE email = ?',
             [email]
@@ -47,18 +47,18 @@ const register = async (req, res) => {
             });
         }
 
-        // 5. Hasher le mot de passe avec bcrypt
-        // Le "10" est le nombre de "salt rounds" (plus = plus sécurisé mais plus lent)
+        // 5. Hashare la password con bcrypt
+        // Il "10" è il numero di "salt rounds" (più = più sicuro ma più lento)
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // 6. Insérer l'utilisateur dans la base de données
+        // 6. Inserire l'utente nel database
         const [result] = await pool.query(
             `INSERT INTO users (nome, email, password, ruolo, telefono, descrizione) 
              VALUES (?, ?, ?, ?, ?, ?)`,
             [nome, email, hashedPassword, ruolo, telefono || null, descrizione || null]
         );
 
-        // 7. Répondre avec succès (sans renvoyer le mot de passe)
+        // 7. Rispondere con successo (senza restituire la password)
         res.status(201).json({
             message: 'Registrazione completata con successo!',
             user: {
@@ -70,7 +70,7 @@ const register = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Erreur register:', error);
+        console.error('Errore register:', error);
         res.status(500).json({ 
             error: 'Errore durante la registrazione.' 
         });
@@ -78,24 +78,24 @@ const register = async (req, res) => {
 };
 
 // ============================================
-// LOGIN - Connexion d'un utilisateur existant
+// LOGIN - Accesso di un utente esistente
 // ============================================
 // POST /api/auth/login
 // Body: { email, password }
 
 const login = async (req, res) => {
     try {
-        // 1. Extraire email et password
+        // 1. Estrarre email e password
         const { email, password } = req.body;
 
-        // 2. Validation
+        // 2. Validazione
         if (!email || !password) {
             return res.status(400).json({ 
                 error: 'Email e password sono obbligatori.' 
             });
         }
 
-        // 3. Chercher l'utilisateur par email
+        // 3. Cercare l'utente per email
         const [users] = await pool.query(
             'SELECT * FROM users WHERE email = ?',
             [email]
@@ -109,7 +109,7 @@ const login = async (req, res) => {
 
         const user = users[0];
 
-        // 4. Comparer le mot de passe avec le hash stocké
+        // 4. Confrontare la password con l'hash memorizzato
         const passwordMatch = await bcrypt.compare(password, user.password);
 
         if (!passwordMatch) {
@@ -118,8 +118,8 @@ const login = async (req, res) => {
             });
         }
 
-        // 5. Créer le token JWT
-        // Le token contient les infos utilisateur et expire en 24h
+        // 5. Creare il token JWT
+        // Il token contiene le informazioni utente e scade in 24h
         const token = jwt.sign(
             {
                 id: user.id,
@@ -131,7 +131,7 @@ const login = async (req, res) => {
             { expiresIn: '24h' }
         );
 
-        // 6. Répondre avec le token et les infos utilisateur
+        // 6. Rispondere con il token e le informazioni utente
         res.json({
             message: 'Login effettuato con successo!',
             token,
@@ -144,7 +144,7 @@ const login = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Erreur login:', error);
+        console.error('Errore login:', error);
         res.status(500).json({ 
             error: 'Errore durante il login.' 
         });
@@ -152,14 +152,14 @@ const login = async (req, res) => {
 };
 
 // ============================================
-// GET PROFILE - Récupérer le profil de l'utilisateur connecté
+// GET PROFILE - Recuperare il profilo dell'utente connesso
 // ============================================
 // GET /api/auth/profile
-// Nécessite: Token JWT valide
+// Richiede: Token JWT valido
 
 const getProfile = async (req, res) => {
     try {
-        // req.user est ajouté par le middleware verifyToken
+        // req.user è aggiunto dal middleware verifyToken
         const [users] = await pool.query(
             'SELECT id, nome, email, ruolo, telefono, descrizione, created_at FROM users WHERE id = ?',
             [req.user.id]
@@ -174,7 +174,7 @@ const getProfile = async (req, res) => {
         res.json(users[0]);
 
     } catch (error) {
-        console.error('Erreur getProfile:', error);
+        console.error('Errore getProfile:', error);
         res.status(500).json({ 
             error: 'Errore nel recupero del profilo.' 
         });

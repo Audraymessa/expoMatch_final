@@ -1,8 +1,8 @@
 <!-- ============================================
      DASHBOARD VENDITORE
      ============================================
-     Page privée pour les venditori
-     Affiche la liste de leurs candidatures
+     Pagina privata per i venditori
+     Mostra l'elenco delle loro candidature
 -->
 
 <template>
@@ -37,33 +37,33 @@
             </div>
         </div>
         
-        <!-- Lien vers recherche événements -->
+        <!-- Link alla ricerca eventi -->
         <RouterLink to="/" class="btn btn-primary mb-4">
             <i class="bi bi-search me-2"></i>Cerca nuovi eventi
         </RouterLink>
         
-        <!-- Liste des candidatures -->
+        <!-- Elenco delle candidature -->
         <div class="table-container">
             <h5 class="p-3 mb-0 border-bottom">LE MIE CANDIDATURE</h5>
             
-            <!-- Chargement -->
+            <!-- Caricamento -->
             <div v-if="loading" class="text-center py-5">
                 <div class="spinner-border text-primary" role="status"></div>
             </div>
             
-            <!-- Erreur -->
+            <!-- Errore -->
             <div v-else-if="error" class="alert alert-danger m-3">
                 {{ error }}
             </div>
             
-            <!-- Liste -->
+            <!-- Elenco -->
             <div v-else-if="candidature.length > 0">
                 <div 
                     v-for="cand in candidature" 
                     :key="cand.id"
                     class="p-3 border-bottom d-flex align-items-center"
                 >
-                    <!-- Image événement -->
+                    <!-- Immagine evento -->
                     <img 
                         :src="cand.immagine || defaultImage" 
                         class="rounded me-3"
@@ -71,7 +71,7 @@
                         @error="handleImageError"
                     >
                     
-                    <!-- Infos -->
+                    <!-- Informazioni -->
                     <div class="flex-grow-1">
                         <h6 class="mb-1">{{ cand.titolo }}</h6>
                         <small class="text-muted">
@@ -83,12 +83,12 @@
                         </small>
                     </div>
                     
-                    <!-- Statut -->
+                    <!-- Stato -->
                     <span :class="getStatusClass(cand.stato)" class="badge me-3">
                         {{ getStatusLabel(cand.stato) }}
                     </span>
                     
-                    <!-- Actions -->
+                    <!-- Azioni -->
                     <div>
                         <RouterLink 
                             :to="`/evento/${cand.evento_id}`"
@@ -108,7 +108,7 @@
                 </div>
             </div>
             
-            <!-- Aucune candidature -->
+            <!-- Nessuna candidatura -->
             <div v-else class="text-center py-5">
                 <i class="bi bi-inbox display-4 text-muted"></i>
                 <p class="text-muted mt-3">Non hai ancora inviato candidature</p>
@@ -118,7 +118,7 @@
             </div>
         </div>
         
-        <!-- Modal de confirmation suppression -->
+        <!-- Modal di conferma eliminazione -->
         <div class="modal fade" id="deleteModal" tabindex="-1">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -170,21 +170,21 @@ export default {
     },
     
     methods: {
-        // Charger mes candidatures
+        // Caricare le mie candidature
         async loadCandidature() {
             try {
                 this.loading = true
                 this.error = null
                 this.candidature = await candidaturaService.getMyCandidature()
             } catch (err) {
-                console.error('Erreur chargement candidatures:', err)
+                console.error('Errore caricamento candidature:', err)
                 this.error = 'Impossibile caricare le candidature.'
             } finally {
                 this.loading = false
             }
         },
         
-        // Formater la date
+        // Formattare la data
         formatDate(dateString) {
             if (!dateString) return 'N/D'
             const date = new Date(dateString)
@@ -195,7 +195,7 @@ export default {
             })
         },
         
-        // Classe CSS selon le statut
+        // Classe CSS in base allo stato
         getStatusClass(stato) {
             switch (stato) {
                 case 'in_attesa': return 'badge-attesa'
@@ -205,7 +205,7 @@ export default {
             }
         },
         
-        // Label du statut
+        // Etichetta dello stato
         getStatusLabel(stato) {
             switch (stato) {
                 case 'in_attesa': return 'In attesa'
@@ -215,12 +215,12 @@ export default {
             }
         },
         
-        // Gérer erreur image
+        // Gestire errore immagine
         handleImageError(e) {
             e.target.src = this.defaultImage
         },
         
-        // Ouvrir modal de confirmation
+        // Aprire modal di conferma
         confirmDelete(cand) {
             this.candidaturaToDelete = cand
             const modal = new window.bootstrap.Modal(document.getElementById('deleteModal'))
@@ -228,14 +228,14 @@ export default {
             modal.show()
         },
         
-        // Supprimer la candidature
+        // Eliminare la candidatura
         async deleteCandidatura() {
             try {
                 await candidaturaService.delete(this.candidaturaToDelete.id)
                 this.deleteModal.hide()
                 await this.loadCandidature()
             } catch (err) {
-                console.error('Erreur suppression:', err)
+                console.error('Errore eliminazione:', err)
                 alert('Errore nel ritiro della candidatura')
             }
         }

@@ -1,35 +1,35 @@
 // ============================================
-// ROUTES D'AUTHENTIFICATION
+// ROUTE DI AUTENTICAZIONE
 // ============================================
-// Définit les endpoints pour l'inscription et la connexion
-// Préfixe: /api/auth
+// Definisce gli endpoint per la registrazione e l'accesso
+// Prefisso: /api/auth
 
 const express = require('express');
 const router = express.Router();
 
-// Importer le controller et le middleware
+// Importare il controller e il middleware
 const { register, login, getProfile } = require('../controllers/authController');
 const { verifyToken } = require('../middleware/authMiddleware');
 
 // ============================================
-// ROUTES PUBLIQUES (sans authentification)
+// ROUTE PUBBLICHE (senza autenticazione)
 // ============================================
 
-// POST /api/auth/register - Inscription
-// Body attendu: { nome, email, password, ruolo, telefono?, descrizione? }
+// POST /api/auth/register - Registrazione
+// Body atteso: { nome, email, password, ruolo, telefono?, descrizione? }
 router.post('/register', register);
 
-// POST /api/auth/login - Connexion
-// Body attendu: { email, password }
-// Retourne: { token, user }
+// POST /api/auth/login - Accesso
+// Body atteso: { email, password }
+// Restituisce: { token, user }
 router.post('/login', login);
 
 // ============================================
-// ROUTES PROTÉGÉES (nécessitent un token JWT)
+// ROUTE PROTETTE (richiedono un token JWT)
 // ============================================
 
-// GET /api/auth/profile - Récupérer son profil
-// Header requis: Authorization: Bearer <token>
+// GET /api/auth/profile - Recuperare il proprio profilo
+// Header richiesto: Authorization: Bearer <token>
 router.get('/profile', verifyToken, getProfile);
 
 module.exports = router;

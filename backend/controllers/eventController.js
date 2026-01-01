@@ -1,24 +1,24 @@
 // ============================================
-// CONTROLLER DES ÉVÉNEMENTS
+// CONTROLLER DEGLI EVENTI
 // ============================================
-// Gère le CRUD (Create, Read, Update, Delete) des événements
-// Les événements sont créés par les organizzatori
+// Gestisce il CRUD (Create, Read, Update, Delete) degli eventi
+// Gli eventi sono creati dagli organizzatori
 
 const { pool } = require('../config/database');
 
 // ============================================
-// GET ALL EVENTS - Liste tous les événements
+// GET ALL EVENTS - Elenco di tutti gli eventi
 // ============================================
 // GET /api/eventi
-// Accessible à tous (public)
-// Query params optionnels: citta, data
+// Accessibile a tutti (pubblico)
+// Query params opzionali: citta, data
 
 const getAllEvents = async (req, res) => {
     try {
-        // Récupérer les filtres éventuels
+        // Recuperare i filtri eventuali
         const { citta, data } = req.query;
         
-        // Construire la requête SQL avec filtres optionnels
+        // Costruire la query SQL con filtri opzionali
         let query = `
             SELECT e.*, u.nome as organizzatore_nome 
             FROM eventi e 
@@ -27,24 +27,24 @@ const getAllEvents = async (req, res) => {
         `;
         const params = [];
 
-        // Filtre par ville si fourni
+        // Filtro per città se fornito
         if (citta) {
             query += ' AND e.citta LIKE ?';
             params.push(`%${citta}%`);
         }
 
-        // Filtre par date si fourni
+        // Filtro per data se fornito
         if (data) {
             query += ' AND e.data_evento = ?';
             params.push(data);
         }
 
-        // Trier par date (événements les plus proches en premier)
+        // Ordinare per data (eventi più vicini per primi)
         query += ' ORDER BY e.data_evento ASC';
 
         const [events] = await pool.query(query, params);
 
-        // Parser le champ requisiti (peut être JSON ou texte simple)
+        // Parsare il campo requisiti (può essere JSON o testo semplice)
         const eventsWithRequisiti = events.map(event => {
             let requisiti = [];
             if (event.requisiti) {
@@ -62,7 +62,7 @@ const getAllEvents = async (req, res) => {
         res.json(eventsWithRequisiti);
 
     } catch (error) {
-        console.error('Erreur getAllEvents:', error);
+        console.error('Errore getAllEvents:', error);
         res.status(500).json({ 
             error: 'Errore nel recupero degli eventi.' 
         });
@@ -70,10 +70,10 @@ const getAllEvents = async (req, res) => {
 };
 
 // ============================================
-// GET EVENT BY ID - Détail d'un événement
+// GET EVENT BY ID - Dettaglio di un evento
 // ============================================
 // GET /api/eventi/:id
-// Accessible à tous (public)
+// Accessibile a tutti (pubblico)
 
 const getEventById = async (req, res) => {
     try {
@@ -93,7 +93,7 @@ const getEventById = async (req, res) => {
             });
         }
 
-        // Parser les requisiti (peut être JSON ou texte simple)
+        // Parsare i requisiti (può essere JSON o testo semplice)
         let requisiti = [];
         if (events[0].requisiti) {
             try {
@@ -107,7 +107,7 @@ const getEventById = async (req, res) => {
         res.json(event);
 
     } catch (error) {
-        console.error('Erreur getEventById:', error);
+        console.error('Errore getEventById:', error);
         res.status(500).json({ 
             error: 'Errore nel recupero dell\'evento.' 
         });
@@ -115,10 +115,10 @@ const getEventById = async (req, res) => {
 };
 
 // ============================================
-// CREATE EVENT - Créer un nouvel événement
+// CREATE EVENT - Creare un nuovo evento
 // ============================================
 // POST /api/eventi
-// Réservé aux organizzatori (protégé par JWT)
+// Riservato agli organizzatori (protetto da JWT)
 // Body: { titolo, descrizione, data_evento, citta, indirizzo, prezzo, posti_totali, dimensione_stand, requisiti, immagine }
 
 const createEvent = async (req, res) => {
@@ -136,20 +136,20 @@ const createEvent = async (req, res) => {
             immagine 
         } = req.body;
 
-        // L'ID de l'organizzatore vient du token JWT
+        // L'ID dell'organizzatore proviene dal token JWT
         const organizzatore_id = req.user.id;
 
-        // Validation des champs obligatoires
+        // Validazione dei campi obbligatori
         if (!titolo || !descrizione || !data_evento || !citta || !indirizzo || !prezzo || !posti_totali) {
             return res.status(400).json({ 
                 error: 'Tutti i campi obbligatori devono essere compilati.' 
             });
         }
 
-        // Convertir les requisiti en JSON string pour stockage
+        // Convertire i requisiti in stringa JSON per la memorizzazione
         const requisitiJson = requisiti ? JSON.stringify(requisiti) : null;
 
-        // Insérer l'événement
+        // Inserire l'evento
         const [result] = await pool.query(
             `INSERT INTO eventi 
              (titolo, descrizione, data_evento, citta, indirizzo, prezzo, posti_totali, posti_disponibili, dimensione_stand, requisiti, immagine, organizzatore_id) 
@@ -168,7 +168,7 @@ const createEvent = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Erreur createEvent:', error);
+        console.error('Errore createEvent:', error);
         res.status(500).json({ 
             error: 'Errore nella creazione dell\'evento.' 
         });
@@ -176,17 +176,17 @@ const createEvent = async (req, res) => {
 };
 
 // ============================================
-// UPDATE EVENT - Modifier un événement
+// UPDATE EVENT - Modificare un evento
 // ============================================
 // PUT /api/eventi/:id
-// Réservé au propriétaire de l'événement
+// Riservato al proprietario dell'evento
 
 const updateEvent = async (req, res) => {
     try {
         const { id } = req.params;
         const organizzatore_id = req.user.id;
 
-        // Vérifier que l'événement appartient à l'utilisateur
+        // Verificare che l'evento appartenga all'utente
         const [existingEvents] = await pool.query(
             'SELECT * FROM eventi WHERE id = ? AND organizzatore_id = ?',
             [id, organizzatore_id]
@@ -198,7 +198,7 @@ const updateEvent = async (req, res) => {
             });
         }
 
-        // Récupérer les nouvelles données
+        // Recuperare i nuovi dati
         const { 
             titolo, 
             descrizione, 
@@ -212,10 +212,10 @@ const updateEvent = async (req, res) => {
             immagine 
         } = req.body;
 
-        // Convertir requisiti en JSON
+        // Convertire i requisiti in JSON
         const requisitiJson = requisiti ? JSON.stringify(requisiti) : null;
 
-        // Mettre à jour
+        // Aggiornare
         await pool.query(
             `UPDATE eventi SET 
              titolo = ?, descrizione = ?, data_evento = ?, citta = ?, indirizzo = ?, 
@@ -227,7 +227,7 @@ const updateEvent = async (req, res) => {
         res.json({ message: 'Evento aggiornato con successo!' });
 
     } catch (error) {
-        console.error('Erreur updateEvent:', error);
+        console.error('Errore updateEvent:', error);
         res.status(500).json({ 
             error: 'Errore nell\'aggiornamento dell\'evento.' 
         });
@@ -235,17 +235,17 @@ const updateEvent = async (req, res) => {
 };
 
 // ============================================
-// DELETE EVENT - Supprimer un événement
+// DELETE EVENT - Eliminare un evento
 // ============================================
 // DELETE /api/eventi/:id
-// Réservé au propriétaire de l'événement
+// Riservato al proprietario dell'evento
 
 const deleteEvent = async (req, res) => {
     try {
         const { id } = req.params;
         const organizzatore_id = req.user.id;
 
-        // Vérifier que l'événement appartient à l'utilisateur
+        // Verificare che l'evento appartenga all'utente
         const [result] = await pool.query(
             'DELETE FROM eventi WHERE id = ? AND organizzatore_id = ?',
             [id, organizzatore_id]
@@ -260,7 +260,7 @@ const deleteEvent = async (req, res) => {
         res.json({ message: 'Evento eliminato con successo!' });
 
     } catch (error) {
-        console.error('Erreur deleteEvent:', error);
+        console.error('Errore deleteEvent:', error);
         res.status(500).json({ 
             error: 'Errore nell\'eliminazione dell\'evento.' 
         });
@@ -268,16 +268,16 @@ const deleteEvent = async (req, res) => {
 };
 
 // ============================================
-// GET MY EVENTS - Événements de l'organizzatore connecté
+// GET MY EVENTS - Eventi dell'organizzatore connesso
 // ============================================
 // GET /api/eventi/miei
-// Réservé aux organizzatori connectés
+// Riservato agli organizzatori connessi
 
 const getMyEvents = async (req, res) => {
     try {
         const organizzatore_id = req.user.id;
 
-        // Récupérer les événements avec le compte des candidatures
+        // Recuperare gli eventi con il conteggio delle candidature
         const [events] = await pool.query(
             `SELECT e.*, 
                     (SELECT COUNT(*) FROM candidature WHERE evento_id = e.id) as num_candidature,
@@ -288,7 +288,7 @@ const getMyEvents = async (req, res) => {
             [organizzatore_id]
         );
 
-        // Parser les requisiti (peut être JSON ou texte simple)
+        // Parsare i requisiti (può essere JSON o testo semplice)
         const eventsWithRequisiti = events.map(event => {
             let requisiti = [];
             if (event.requisiti) {
@@ -304,7 +304,7 @@ const getMyEvents = async (req, res) => {
         res.json(eventsWithRequisiti);
 
     } catch (error) {
-        console.error('Erreur getMyEvents:', error);
+        console.error('Errore getMyEvents:', error);
         res.status(500).json({ 
             error: 'Errore nel recupero dei tuoi eventi.' 
         });

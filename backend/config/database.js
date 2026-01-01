@@ -1,46 +1,46 @@
 // ============================================
-// CONFIGURATION DE LA BASE DE DONNÉES MySQL
+// CONFIGURAZIONE DEL DATABASE MySQL
 // ============================================
-// Ce fichier gère la connexion à la base de données MySQL
-// Il utilise mysql2 avec le support des Promesses pour async/await
+// Questo file gestisce la connessione al database MySQL
+// Utilizza mysql2 con il supporto delle Promise per async/await
 
-// Importation du module mysql2 avec support Promise
+// Importazione del modulo mysql2 con supporto Promise
 const mysql = require('mysql2/promise');
 
-// Chargement des variables d'environnement depuis .env
+// Caricamento delle variabili d'ambiente da .env
 require('dotenv').config();
 
 // ============================================
-// Création du pool de connexions
+// Creazione del pool di connessioni
 // ============================================
-// Un "pool" permet de réutiliser les connexions au lieu d'en créer
-// une nouvelle à chaque requête (plus performant)
+// Un "pool" consente di riutilizzare le connessioni invece di crearne
+// una nuova ad ogni richiesta (più performante)
 
 const pool = mysql.createPool({
-    host: process.env.DB_HOST,         // Adresse du serveur MySQL (localhost)
-    user: process.env.DB_USER,         // Nom d'utilisateur MySQL (root)
-    password: process.env.DB_PASSWORD, // Mot de passe MySQL
-    database: process.env.DB_NAME,     // Nom de la base de données (expomatch)
-    waitForConnections: true,          // Attendre si toutes les connexions sont utilisées
-    connectionLimit: 10,               // Maximum 10 connexions simultanées
-    queueLimit: 0                      // Pas de limite sur la file d'attente
+    host: process.env.DB_HOST,         // Indirizzo del server MySQL (localhost)
+    user: process.env.DB_USER,         // Nome utente MySQL (root)
+    password: process.env.DB_PASSWORD, // Password MySQL
+    database: process.env.DB_NAME,     // Nome del database (expomatch)
+    waitForConnections: true,          // Attendere se tutte le connessioni sono utilizzate
+    connectionLimit: 10,               // Massimo 10 connessioni simultanee
+    queueLimit: 0                      // Nessun limite sulla coda di attesa
 });
 
 // ============================================
-// Fonction de test de connexion
+// Funzione di test di connessione
 // ============================================
-// Appelée au démarrage pour vérifier que MySQL fonctionne
+// Chiamata all'avvio per verificare che MySQL funzioni
 
 async function testConnection() {
     try {
         const connection = await pool.getConnection();
-        console.log('✅ Connexion MySQL réussie !');
-        connection.release(); // Libérer la connexion
+        console.log('✅ Connessione MySQL riuscita!');
+        connection.release(); // Liberare la connessione
     } catch (error) {
-        console.error('❌ Erreur connexion MySQL:', error.message);
+        console.error('❌ Errore connessione MySQL:', error.message);
     }
 }
 
-// Exporter le pool pour l'utiliser dans les controllers
+// Esportare il pool per utilizzarlo nei controller
 module.exports = { pool, testConnection };
 

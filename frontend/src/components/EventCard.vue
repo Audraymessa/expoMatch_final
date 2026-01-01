@@ -1,13 +1,13 @@
 <!-- ============================================
-     EVENT CARD - Carte d'Événement
+     EVENT CARD - Card Evento
      ============================================
-     Composant réutilisable pour afficher un événement
-     sous forme de carte (utilisé sur la homepage)
+     Componente riutilizzabile per visualizzare un evento
+     sotto forma di card (utilizzato nella homepage)
 -->
 
 <template>
     <div class="event-card">
-        <!-- Image de l'événement -->
+        <!-- Immagine dell'evento -->
         <img 
             :src="event.immagine || defaultImage" 
             :alt="event.titolo"
@@ -15,10 +15,10 @@
         >
         
         <div class="card-body">
-            <!-- Titre de l'événement en gras -->
+            <!-- Titolo dell'evento in grassetto -->
             <h5 class="event-title mb-2 fw-bold">{{ event.titolo }}</h5>
             
-            <!-- Informations de l'événement -->
+            <!-- Informazioni dell'evento -->
             <div class="event-info">
                 <i class="bi bi-calendar"></i>
                 <span>{{ formatDate(event.data_evento) }}</span>
@@ -39,7 +39,7 @@
                 <span>{{ event.dimensione_stand || 'N/D' }}</span>
             </div>
             
-            <!-- Prix et bouton détails -->
+            <!-- Prezzo e pulsante dettagli -->
             <div class="d-flex justify-content-between align-items-center mt-3">
                 <span class="event-price">{{ event.prezzo }}€</span>
                 <RouterLink 
@@ -57,7 +57,7 @@
 export default {
     name: 'EventCard',
     
-    // Props = données passées par le composant parent
+    // Props = dati passati dal componente padre
     props: {
         event: {
             type: Object,
@@ -67,13 +67,13 @@ export default {
     
     data() {
         return {
-            // Image par défaut si aucune image n'est fournie
+            // Immagine predefinita se nessuna immagine è fornita
             defaultImage: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400'
         }
     },
     
     methods: {
-        // Formater la date en format italien
+        // Formattare la data in formato italiano
         formatDate(dateString) {
             if (!dateString) return 'N/D'
             const date = new Date(dateString)
@@ -84,7 +84,7 @@ export default {
             })
         },
         
-        // Gérer les erreurs de chargement d'image
+        // Gestire gli errori di caricamento immagine
         handleImageError(e) {
             e.target.src = this.defaultImage
         }

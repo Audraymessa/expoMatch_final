@@ -1,34 +1,34 @@
 // ============================================
-// SERVICE API - Communication avec le Backend
+// SERVIZIO API - Comunicazione con il Backend
 // ============================================
-// Ce fichier centralise tous les appels HTTP vers l'API
-// Utilise Axios pour les requêtes AJAX
+// Questo file centralizza tutte le chiamate HTTP all'API
+// Utilizza Axios per le richieste AJAX
 
 import axios from 'axios'
 
 // ============================================
-// CONFIGURATION D'AXIOS
+// CONFIGURAZIONE DI AXIOS
 // ============================================
 
-// Créer une instance Axios avec la configuration de base
+// Creare un'istanza Axios con la configurazione di base
 const api = axios.create({
-    baseURL: 'http://localhost:3000/api', // URL du backend
+    baseURL: 'http://localhost:3000/api', // URL del backend
     headers: {
         'Content-Type': 'application/json'
     }
 })
 
 // ============================================
-// INTERCEPTEUR DE REQUÊTE
+// INTERCETTORE DI RICHIESTA
 // ============================================
-// Ajoute automatiquement le token JWT à chaque requête
+// Aggiunge automaticamente il token JWT a ogni richiesta
 
 api.interceptors.request.use(
     (config) => {
-        // Récupérer le token du localStorage
+        // Recuperare il token dal localStorage
         const token = localStorage.getItem('token')
         
-        // Si un token existe, l'ajouter aux headers
+        // Se esiste un token, aggiungerlo agli header
         if (token) {
             config.headers.Authorization = `Bearer ${token}`
         }
@@ -41,14 +41,14 @@ api.interceptors.request.use(
 )
 
 // ============================================
-// INTERCEPTEUR DE RÉPONSE
+// INTERCETTORE DI RISPOSTA
 // ============================================
-// Gère les erreurs globalement (ex: token expiré)
+// Gestisce gli errori globalmente (es: token scaduto)
 
 api.interceptors.response.use(
     (response) => response,
     (error) => {
-        // Si erreur 401 (non autorisé), déconnecter l'utilisateur
+        // Se errore 401 (non autorizzato), disconnettere l'utente
         if (error.response && error.response.status === 401) {
             localStorage.removeItem('token')
             localStorage.removeItem('user')
@@ -59,20 +59,20 @@ api.interceptors.response.use(
 )
 
 // ============================================
-// SERVICES D'AUTHENTIFICATION
+// SERVIZI DI AUTENTICAZIONE
 // ============================================
 
 export const authService = {
-    // Inscription d'un nouvel utilisateur
+    // Registrazione di un nuovo utente
     async register(userData) {
         const response = await api.post('/auth/register', userData)
         return response.data
     },
     
-    // Connexion
+    // Accesso
     async login(credentials) {
         const response = await api.post('/auth/login', credentials)
-        // Stocker le token et les infos utilisateur
+        // Memorizzare il token e le informazioni utente
         if (response.data.token) {
             localStorage.setItem('token', response.data.token)
             localStorage.setItem('user', JSON.stringify(response.data.user))
@@ -80,24 +80,24 @@ export const authService = {
         return response.data
     },
     
-    // Déconnexion
+    // Disconnessione
     logout() {
         localStorage.removeItem('token')
         localStorage.removeItem('user')
     },
     
-    // Récupérer le profil de l'utilisateur connecté
+    // Recuperare il profilo dell'utente connesso
     async getProfile() {
         const response = await api.get('/auth/profile')
         return response.data
     },
     
-    // Vérifier si l'utilisateur est connecté
+    // Verificare se l'utente è connesso
     isAuthenticated() {
         return !!localStorage.getItem('token')
     },
     
-    // Récupérer les infos de l'utilisateur connecté
+    // Recuperare le informazioni dell'utente connesso
     getCurrentUser() {
         const user = localStorage.getItem('user')
         return user ? JSON.parse(user) : null
@@ -105,11 +105,11 @@ export const authService = {
 }
 
 // ============================================
-// SERVICES DES ÉVÉNEMENTS
+// SERVIZI DEGLI EVENTI
 // ============================================
 
 export const eventService = {
-    // Récupérer tous les événements (avec filtres optionnels)
+    // Recuperare tutti gli eventi (con filtri opzionali)
     async getAll(filters = {}) {
         const params = new URLSearchParams()
         if (filters.citta) params.append('citta', filters.citta)
@@ -119,31 +119,31 @@ export const eventService = {
         return response.data
     },
     
-    // Récupérer un événement par son ID
+    // Recuperare un evento tramite il suo ID
     async getById(id) {
         const response = await api.get(`/eventi/${id}`)
         return response.data
     },
     
-    // Récupérer mes événements (organizzatore)
+    // Recuperare i miei eventi (organizzatore)
     async getMyEvents() {
         const response = await api.get('/eventi/miei/lista')
         return response.data
     },
     
-    // Créer un nouvel événement
+    // Creare un nuovo evento
     async create(eventData) {
         const response = await api.post('/eventi', eventData)
         return response.data
     },
     
-    // Modifier un événement
+    // Modificare un evento
     async update(id, eventData) {
         const response = await api.put(`/eventi/${id}`, eventData)
         return response.data
     },
     
-    // Supprimer un événement
+    // Eliminare un evento
     async delete(id) {
         const response = await api.delete(`/eventi/${id}`)
         return response.data
@@ -151,35 +151,35 @@ export const eventService = {
 }
 
 // ============================================
-// SERVICES DES CANDIDATURES
+// SERVIZI DELLE CANDIDATURE
 // ============================================
 
 export const candidaturaService = {
-    // Postuler à un événement (venditore)
+    // Candidarsi a un evento (venditore)
     async create(candidaturaData) {
         const response = await api.post('/candidature', candidaturaData)
         return response.data
     },
     
-    // Récupérer mes candidatures (venditore)
+    // Recuperare le mie candidature (venditore)
     async getMyCandidature() {
         const response = await api.get('/candidature/mie')
         return response.data
     },
     
-    // Récupérer les candidatures d'un événement (organizzatore)
+    // Recuperare le candidature di un evento (organizzatore)
     async getEventCandidature(eventoId) {
         const response = await api.get(`/candidature/evento/${eventoId}`)
         return response.data
     },
     
-    // Approuver/Refuser une candidature (organizzatore)
+    // Approvare/Rifiutare una candidatura (organizzatore)
     async updateStatus(id, stato) {
         const response = await api.put(`/candidature/${id}`, { stato })
         return response.data
     },
     
-    // Retirer ma candidature (venditore)
+    // Ritirare la mia candidatura (venditore)
     async delete(id) {
         const response = await api.delete(`/candidature/${id}`)
         return response.data

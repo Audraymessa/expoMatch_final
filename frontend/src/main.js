@@ -1,36 +1,36 @@
 // ============================================
-// POINT D'ENTRÉE DE L'APPLICATION VUE.JS
+// PUNTO DI INGRESSO DELL'APPLICAZIONE VUE.JS
 // ============================================
-// Ce fichier initialise Vue et charge tous les plugins
+// Questo file inizializza Vue e carica tutti i plugin
 
-// Importation de Vue
+// Importazione di Vue
 import { createApp } from 'vue'
 
-// Importation du composant racine
+// Importazione del componente radice
 import App from './App.vue'
 
-// Importation du router (navigation entre pages)
+// Importazione del router (navigazione tra pagine)
 import router from './router'
 
-// Importation de Bootstrap CSS et JS
+// Importazione di Bootstrap CSS e JS
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 
-// Importation des icônes Bootstrap
+// Importazione delle icone Bootstrap
 import 'bootstrap-icons/font/bootstrap-icons.css'
 
-// Importation des styles personnalisés
+// Importazione degli stili personalizzati
 import './assets/style.css'
 
 // ============================================
-// CRÉATION DE L'APPLICATION
+// CREAZIONE DELL'APPLICAZIONE
 // ============================================
 
 const app = createApp(App)
 
-// Ajout du router pour la navigation
+// Aggiunta del router per la navigazione
 app.use(router)
 
-// Montage de l'application sur l'élément #app
+// Montaggio dell'applicazione sull'elemento #app
 app.mount('#app')
 

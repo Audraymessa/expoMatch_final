@@ -1,8 +1,8 @@
 <!-- ============================================
-     REGISTER VIEW - Page d'Inscription
+     REGISTER VIEW - Pagina di Registrazione
      ============================================
-     Formulaire d'inscription pour les nouveaux utilisateurs
-     Permet de choisir entre Organizzatore et Venditore
+     Formulario di registrazione per i nuovi utenti
+     Permette di scegliere tra Organizzatore e Venditore
 -->
 
 <template>
@@ -12,19 +12,19 @@
                 <div class="form-container">
                     <h2 class="text-center mb-4">Registrati</h2>
                     
-                    <!-- Message d'erreur -->
+                    <!-- Messaggio di errore -->
                     <div v-if="error" class="alert alert-danger">
                         {{ error }}
                     </div>
                     
-                    <!-- Message de succès -->
+                    <!-- Messaggio di successo -->
                     <div v-if="success" class="alert alert-success">
                         {{ success }}
                     </div>
                     
-                    <!-- Formulaire d'inscription -->
+                    <!-- Formulario di registrazione -->
                     <form @submit.prevent="handleRegister">
-                        <!-- Choix du rôle -->
+                        <!-- Scelta del ruolo -->
                         <div class="mb-4">
                             <label class="form-label">Tipo di account *</label>
                             <div class="d-flex gap-3">
@@ -62,7 +62,7 @@
                             </small>
                         </div>
                         
-                        <!-- Nom -->
+                        <!-- Nome -->
                         <div class="mb-3">
                             <label class="form-label">Nome completo *</label>
                             <input 
@@ -99,7 +99,7 @@
                             >
                         </div>
                         
-                        <!-- Téléphone (optionnel) -->
+                        <!-- Telefono (opzionale) -->
                         <div class="mb-3">
                             <label class="form-label">Telefono</label>
                             <input 
@@ -110,7 +110,7 @@
                             >
                         </div>
                         
-                        <!-- Description (pour venditori) -->
+                        <!-- Descrizione (per venditori) -->
                         <div class="mb-3" v-if="form.ruolo === 'venditore'">
                             <label class="form-label">Descrizione attività</label>
                             <textarea 
@@ -121,7 +121,7 @@
                             ></textarea>
                         </div>
                         
-                        <!-- Bouton d'inscription -->
+                        <!-- Pulsante di registrazione -->
                         <button 
                             type="submit" 
                             class="btn btn-primary w-100"
@@ -132,7 +132,7 @@
                         </button>
                     </form>
                     
-                    <!-- Lien vers connexion -->
+                    <!-- Link all'accesso -->
                     <p class="text-center mt-4 mb-0">
                         Hai già un account? 
                         <RouterLink to="/login">Accedi</RouterLink>
@@ -155,7 +155,7 @@ export default {
                 nome: '',
                 email: '',
                 password: '',
-                ruolo: 'venditore',  // Par défaut
+                ruolo: 'venditore',  // Predefinito
                 telefono: '',
                 descrizione: ''
             },
@@ -172,19 +172,19 @@ export default {
                 this.error = null
                 this.success = null
                 
-                // Appel API d'inscription
+                // Chiamata API di registrazione
                 await authService.register(this.form)
                 
-                // Afficher message de succès
+                // Mostrare messaggio di successo
                 this.success = 'Registrazione completata! Ora puoi accedere.'
                 
-                // Rediriger vers login après 2 secondes
+                // Reindirizzare al login dopo 2 secondi
                 setTimeout(() => {
                     this.$router.push('/login')
                 }, 2000)
                 
             } catch (err) {
-                console.error('Erreur register:', err)
+                console.error('Errore registrazione:', err)
                 this.error = err.response?.data?.error || 'Errore durante la registrazione.'
             } finally {
                 this.loading = false

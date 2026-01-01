@@ -1,31 +1,31 @@
 // ============================================
-// MIDDLEWARE D'AUTHENTIFICATION JWT
+// MIDDLEWARE DI AUTENTICAZIONE JWT
 // ============================================
-// Ce middleware vérifie que l'utilisateur est connecté
-// Il extrait et valide le token JWT envoyé dans les headers
+// Questo middleware verifica che l'utente sia connesso
+// Estrae e valida il token JWT inviato negli header
 
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 // ============================================
-// verifyToken - Vérifie si l'utilisateur est authentifié
+// verifyToken - Verifica se l'utente è autenticato
 // ============================================
-// Utilisé sur les routes protégées
-// Le token doit être envoyé dans le header: Authorization: Bearer <token>
+// Utilizzato sulle route protette
+// Il token deve essere inviato nell'header: Authorization: Bearer <token>
 
 const verifyToken = (req, res, next) => {
     try {
-        // 1. Récupérer le header Authorization
+        // 1. Recuperare l'header Authorization
         const authHeader = req.headers['authorization'];
         
-        // 2. Vérifier que le header existe
+        // 2. Verificare che l'header esista
         if (!authHeader) {
             return res.status(401).json({ 
                 error: 'Accesso negato. Token mancante.' 
             });
         }
 
-        // 3. Extraire le token (format: "Bearer <token>")
+        // 3. Estrarre il token (formato: "Bearer <token>")
         const token = authHeader.split(' ')[1];
         
         if (!token) {
@@ -34,18 +34,18 @@ const verifyToken = (req, res, next) => {
             });
         }
 
-        // 4. Vérifier et décoder le token
+        // 4. Verificare e decodificare il token
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         
-        // 5. Ajouter les données utilisateur à la requête
-        // Ces données seront accessibles dans les controllers
+        // 5. Aggiungere i dati utente alla richiesta
+        // Questi dati saranno accessibili nei controller
         req.user = decoded;
         
-        // 6. Passer au middleware/controller suivant
+        // 6. Passare al middleware/controller successivo
         next();
         
     } catch (error) {
-        // Token invalide ou expiré
+        // Token invalido o scaduto
         return res.status(401).json({ 
             error: 'Token non valido o scaduto.' 
         });
@@ -53,10 +53,10 @@ const verifyToken = (req, res, next) => {
 };
 
 // ============================================
-// isOrganizzatore - Vérifie le rôle organizzatore
+// isOrganizzatore - Verifica il ruolo organizzatore
 // ============================================
-// Utilisé sur les routes réservées aux organizzatori
-// Doit être appelé APRÈS verifyToken
+// Utilizzato sulle route riservate agli organizzatori
+// Deve essere chiamato DOPO verifyToken
 
 const isOrganizzatore = (req, res, next) => {
     if (req.user.ruolo !== 'organizzatore') {
@@ -68,9 +68,9 @@ const isOrganizzatore = (req, res, next) => {
 };
 
 // ============================================
-// isVenditore - Vérifie le rôle venditore
+// isVenditore - Verifica il ruolo venditore
 // ============================================
-// Utilisé sur les routes réservées aux venditori
+// Utilizzato sulle route riservate ai venditori
 
 const isVenditore = (req, res, next) => {
     if (req.user.ruolo !== 'venditore') {

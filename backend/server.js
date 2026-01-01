@@ -1,21 +1,21 @@
 // ============================================
-// SERVEUR PRINCIPAL - ExpoMatch API
+// SERVER PRINCIPALE - ExpoMatch API
 // ============================================
-// Point d'entrée de l'application backend
-// Configure Express et charge toutes les routes
+// Punto di ingresso dell'applicazione backend
+// Configura Express e carica tutte le route
 
 // ============================================
-// 1. IMPORTATION DES MODULES
+// 1. IMPORTAZIONE DEI MODULI
 // ============================================
 
-const express = require('express');  // Framework web pour Node.js
-const cors = require('cors');        // Permet les requêtes cross-origin (frontend → backend)
-require('dotenv').config();          // Charge les variables d'environnement
+const express = require('express');  // Framework web per Node.js
+const cors = require('cors');        // Consente le richieste cross-origin (frontend → backend)
+require('dotenv').config();          // Carica le variabili d'ambiente
 
-// Importation de la configuration base de données
+// Importazione della configurazione database
 const { testConnection } = require('./config/database');
 
-// Importation des routes
+// Importazione delle route
 const authRoutes = require('./routes/authRoutes');
 const eventRoutes = require('./routes/eventRoutes');
 const candidaturaRoutes = require('./routes/candidaturaRoutes');
@@ -23,38 +23,38 @@ const uploadRoutes = require('./routes/uploadRoutes');
 const path = require('path');
 
 // ============================================
-// 2. INITIALISATION D'EXPRESS
+// 2. INIZIALIZZAZIONE DI EXPRESS
 // ============================================
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // ============================================
-// 3. MIDDLEWARES GLOBAUX
+// 3. MIDDLEWARE GLOBALI
 // ============================================
-// Les middlewares sont des fonctions exécutées pour chaque requête
+// I middleware sono funzioni eseguite per ogni richiesta
 
-// CORS: Autorise le frontend (port 5173) à communiquer avec le backend
+// CORS: Consente al frontend (porta 5173) di comunicare con il backend
 app.use(cors({
-    origin: 'http://localhost:5173', // URL du frontend Vue.js
-    credentials: true                 // Autorise l'envoi de cookies
+    origin: 'http://localhost:5173', // URL del frontend Vue.js
+    credentials: true                 // Consente l'invio di cookie
 }));
 
-// Parse JSON: Convertit automatiquement le body des requêtes en objet JavaScript
+// Parse JSON: Converte automaticamente il body delle richieste in oggetto JavaScript
 app.use(express.json());
 
-// Parse URL-encoded: Pour les formulaires HTML classiques
+// Parse URL-encoded: Per i formulari HTML classici
 app.use(express.urlencoded({ extended: true }));
 
-// Servir les fichiers uploadés (images)
+// Servire i file caricati (immagini)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // ============================================
-// 4. ROUTES DE L'API
+// 4. ROUTE DELL'API
 // ============================================
-// Chaque groupe de routes est préfixé par /api
+// Ogni gruppo di route è prefissato con /api
 
-// Route de test - Vérifie que le serveur fonctionne
+// Route di test - Verifica che il server funzioni
 app.get('/api', (req, res) => {
     res.json({ 
         message: 'Benvenuto su ExpoMatch API! 🎪',
@@ -67,42 +67,42 @@ app.get('/api', (req, res) => {
     });
 });
 
-// Routes d'authentification (login, register)
+// Route di autenticazione (login, register)
 app.use('/api/auth', authRoutes);
 
-// Routes des événements (CRUD)
+// Route degli eventi (CRUD)
 app.use('/api/eventi', eventRoutes);
 
-// Routes des candidatures
+// Route delle candidature
 app.use('/api/candidature', candidaturaRoutes);
 
-// Routes d'upload d'images
+// Route di upload immagini
 app.use('/api/upload', uploadRoutes);
 
 // ============================================
-// 5. GESTION DES ERREURS 404
+// 5. GESTIONE ERRORI 404
 // ============================================
-// Si aucune route ne correspond, renvoyer une erreur 404
+// Se nessuna route corrisponde, restituire un errore 404
 
 app.use((req, res) => {
     res.status(404).json({ 
-        error: 'Route non trouvée',
+        error: 'Route non trovata',
         path: req.path 
     });
 });
 
 // ============================================
-// 6. DÉMARRAGE DU SERVEUR
+// 6. AVVIO DEL SERVER
 // ============================================
 
 app.listen(PORT, async () => {
     console.log('============================================');
     console.log('🎪 ExpoMatch API Server');
     console.log('============================================');
-    console.log(`📡 Serveur démarré sur http://localhost:${PORT}`);
-    console.log(`📡 API disponible sur http://localhost:${PORT}/api`);
+    console.log(`📡 Server avviato su http://localhost:${PORT}`);
+    console.log(`📡 API disponibile su http://localhost:${PORT}/api`);
     
-    // Test de la connexion à la base de données
+    // Test della connessione al database
     await testConnection();
     
     console.log('============================================');
