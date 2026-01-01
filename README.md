@@ -162,9 +162,5 @@ Creare account tramite l'interfaccia o direttamente nel database:
 
 ## 📝 Progetto Universitario
 
-Questo progetto è stato realizzato nell'ambito di un corso universitario.
-
-**Autore:** [Il Tuo Nome]
-**Data:** 2025
-
-
+Questo progetto è stato realizzato nell'ambito del corso di ingegneria dei sistemi web 
+Da : Audray messa e Leonardo Leonelli
