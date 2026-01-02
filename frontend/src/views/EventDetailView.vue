@@ -23,23 +23,22 @@
         </div>
         
         <!-- Contenuto -->
-        <div v-else-if="event" class="row">
-            <!-- Colonna sinistra: Immagine e informazioni -->
-            <div class="col-lg-8">
-                <!-- Immagine -->
-                <img 
-                    :src="event.immagine || defaultImage" 
-                    :alt="event.titolo"
-                    class="event-detail-img mb-4"
-                    @error="handleImageError"
-                >
+        <div v-else-if="event">
+            <!-- Immagine -->
+            <img 
+                :src="event.immagine || defaultImage" 
+                :alt="event.titolo"
+                class="event-detail-img mb-4 w-100"
+                style="max-height: 400px; object-fit: cover; border-radius: 8px;"
+                @error="handleImageError"
+            >
+            
+            <!-- Titolo e informazioni principali -->
+            <div class="bg-white p-4 rounded border mb-4">
+                <h1 class="h3 mb-4">{{ event.titolo }}</h1>
                 
-                <!-- Titolo e informazioni principali -->
-                <div class="bg-white p-4 rounded border mb-4">
-                    <h1 class="h3 mb-4">{{ event.titolo }}</h1>
-                    
-                    <div class="row">
-                        <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-6">
                             <div class="detail-info">
                                 <i class="bi bi-calendar"></i>
                                 <div>
@@ -80,82 +79,79 @@
                                     <small class="text-muted">Prezzo</small>
                                     <div class="fw-bold">{{ event.prezzo }} €</div>
                                 </div>
-                            </div>
                         </div>
                     </div>
-                </div>
-                
-                <!-- Descrizione -->
-                <div class="bg-white p-4 rounded border mb-4">
-                    <h5 class="mb-3">Descrizione</h5>
-                    <p>{{ event.descrizione }}</p>
-                </div>
-                
-                <!-- Requisiti Tecnici -->
-                <div class="bg-white p-4 rounded border" v-if="event.requisiti && event.requisiti.length">
-                    <h5 class="mb-3">Requisiti Tecnici</h5>
-                    <ul class="list-unstyled">
-                        <li v-for="(req, index) in event.requisiti" :key="index" class="mb-2">
-                            <i class="bi bi-check-circle-fill text-success me-2"></i>
-                            {{ req }}
-                        </li>
-                    </ul>
                 </div>
             </div>
             
-            <!-- Colonna destra: Box candidatura -->
-            <div class="col-lg-4">
-                <div class="candidatura-box sticky-top" style="top: 100px;">
-                    <h5 class="mb-3">Candidati per questo evento</h5>
-                    
-                    <!-- Se non connesso -->
-                    <div v-if="!isAuthenticated">
-                        <p class="text-muted">
-                            Devi effettuare l'accesso per candidarti a questo evento
-                        </p>
-                        <RouterLink to="/login" class="btn btn-primary w-100">
-                            Accedi per candidare
-                        </RouterLink>
+            <!-- Descrizione -->
+            <div class="bg-white p-4 rounded border mb-4">
+                <h5 class="mb-3">Descrizione</h5>
+                <p>{{ event.descrizione }}</p>
+            </div>
+            
+            <!-- Requisiti Tecnici -->
+            <div class="bg-white p-4 rounded border mb-4" v-if="event.requisiti && event.requisiti.length">
+                <h5 class="mb-3">Requisiti Tecnici</h5>
+                <ul class="list-unstyled">
+                    <li v-for="(req, index) in event.requisiti" :key="index" class="mb-2">
+                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                        {{ req }}
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- Sezione Candidatura (dopo Requisiti Tecnici) -->
+            <div class="bg-white p-4 rounded border">
+                <h5 class="mb-3">Candidati per questo evento</h5>
+                
+                <!-- Se non autenticato -->
+                <div v-if="!isAuthenticated">
+                    <p class="text-muted mb-3">
+                        Devi effettuare l'accesso per candidarti a questo evento
+                    </p>
+                    <RouterLink to="/login" class="btn btn-primary w-100">
+                        Accedi per candidare
+                    </RouterLink>
+                </div>
+                
+                <!-- Se connesso come organizzatore -->
+                <div v-else-if="user?.ruolo === 'organizzatore'">
+                    <p class="text-muted">
+                        Solo i venditori possono candidarsi agli eventi.
+                    </p>
+                </div>
+                
+                <!-- Se connesso come venditore -->
+                <div v-else>
+                    <!-- Messaggio successo/errore -->
+                    <div v-if="candidaturaSuccess" class="alert alert-success">
+                        {{ candidaturaSuccess }}
+                    </div>
+                    <div v-if="candidaturaError" class="alert alert-danger">
+                        {{ candidaturaError }}
                     </div>
                     
-                    <!-- Se connesso come organizzatore -->
-                    <div v-else-if="user?.ruolo === 'organizzatore'">
-                        <p class="text-muted">
-                            Solo i venditori possono candidarsi agli eventi.
-                        </p>
-                    </div>
-                    
-                    <!-- Se connesso come venditore -->
-                    <div v-else>
-                        <!-- Messaggio successo/errore -->
-                        <div v-if="candidaturaSuccess" class="alert alert-success">
-                            {{ candidaturaSuccess }}
-                        </div>
-                        <div v-if="candidaturaError" class="alert alert-danger">
-                            {{ candidaturaError }}
+                    <!-- Formulario di candidatura -->
+                    <div v-if="!candidaturaSuccess">
+                        <div class="mb-3">
+                            <label class="form-label">Messaggio (opzionale)</label>
+                            <textarea 
+                                class="form-control" 
+                                v-model="candidaturaMessage"
+                                rows="3"
+                                placeholder="Presenta la tua attività..."
+                            ></textarea>
                         </div>
                         
-                        <!-- Formulario di candidatura -->
-                        <div v-if="!candidaturaSuccess">
-                            <div class="mb-3">
-                                <label class="form-label">Messaggio (opzionale)</label>
-                                <textarea 
-                                    class="form-control" 
-                                    v-model="candidaturaMessage"
-                                    rows="3"
-                                    placeholder="Presenta la tua attività..."
-                                ></textarea>
-                            </div>
-                            
-                            <button 
-                                class="btn btn-primary w-100"
-                                @click="submitCandidatura"
-                                :disabled="candidaturaLoading || event.posti_disponibili === 0"
-                            >
-                                <span v-if="candidaturaLoading" class="spinner-border spinner-border-sm me-2"></span>
-                                {{ event.posti_disponibili === 0 ? 'Posti esauriti' : 'Invia Candidatura' }}
-                            </button>
-                        </div>
+                        <button 
+                            class="btn btn-primary w-100"
+                            @click="submitCandidatura"
+                            :disabled="candidaturaLoading || event.posti_disponibili === 0"
+                        >
+                            <span v-if="candidaturaLoading" class="spinner-border spinner-border-sm me-2"></span>
+                            {{ event.posti_disponibili === 0 ? 'Posti esauriti' : 'Invia Candidatura' }}
+                        </button>
                     </div>
                 </div>
             </div>

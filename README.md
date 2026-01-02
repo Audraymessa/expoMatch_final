@@ -120,14 +120,54 @@ Creare account tramite l'interfaccia o direttamente nel database:
 
 ---
 
-## 🛠️ Tecnologie
+## 🛠️ Stack Tecnologico
 
-| Livello | Tecnologia |
-|---------|------------|
-| Frontend | Vue.js 3, Bootstrap 5, Axios |
-| Backend | Node.js, Express.js |
-| Database | MySQL |
-| Autenticazione | JWT (JSON Web Token) |
+### 📝 Linguaggi di Programmazione
+- **JavaScript** (ES6+) - Linguaggio principale per frontend e backend
+- **SQL** - Linguaggio per query e gestione database
+- **HTML** - Markup per struttura pagine web
+- **CSS** - Stili e design responsive
+
+---
+
+### 🎯 Framework
+
+#### Frontend
+- **Vue.js 3** (^3.4.0) - Framework JavaScript progressivo per UI
+- **Vue Router 4** (^4.2.5) - Framework di routing per SPA
+- **Bootstrap 5** (^5.3.2) - Framework CSS per UI responsive
+
+#### Backend
+- **Express.js** (^4.18.2) - Framework web per Node.js
+- **Node.js** (v18+) - Runtime JavaScript lato server
+
+---
+
+📚 Librerie e Tecnologie*
+
+#### Frontend
+- **Axios** (^1.6.0) - Libreria HTTP client per chiamate API
+- **Bootstrap Icons** (^1.11.0) - Libreria di icone
+
+#### Backend
+- **MySQL2** (^3.6.0) - Driver MySQL con supporto Promise/async
+- **JWT** (jsonwebtoken ^9.0.2) - Libreria per autenticazione basata su token
+- **bcrypt** (^5.1.1) - Libreria per hashing sicuro delle password
+- **CORS** (^2.8.5) - Middleware per gestione Cross-Origin Resource Sharing
+- **dotenv** (^16.3.1) - Libreria per gestione variabili d'ambiente
+- **Multer** (^2.0.2) - Middleware per gestione upload file
+
+#### Database
+- **MySQL*###  (v8+) - Sistema di gestione database relazionale
+
+---
+
+### 🔧 Strumenti di Sviluppo
+- **Vite** (^5.0.0) - Build tool e dev server veloce per Vue.js
+- **Nodemon** (^3.0.1) - Auto-reload server in modalità sviluppo
+- **npm** - Package manager per Node.js
+- **Git** - Sistema di controllo versione
+- **GitHub** - Piattaforma di hosting repository
 
 ---
 
