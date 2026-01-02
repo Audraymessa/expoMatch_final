@@ -12,10 +12,8 @@
             <i class="bi bi-arrow-left me-2"></i>Torna al Dashboard
         </RouterLink>
         
-        <div class="row justify-content-center">
-            <div class="col-lg-8">
-                <div class="form-container">
-                    <h2 class="mb-4">Crea Nuovo Evento</h2>
+        <div class="form-container">
+            <h2 class="mb-4">Crea Nuovo Evento</h2>
                     
                     <!-- Messaggio di errore -->
                     <div v-if="error" class="alert alert-danger">
@@ -209,8 +207,6 @@
                             </button>
                         </div>
                     </form>
-                </div>
-            </div>
         </div>
     </div>
 </template>

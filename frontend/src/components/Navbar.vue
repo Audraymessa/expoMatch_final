@@ -9,9 +9,9 @@
     <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container">
             <!-- Logo / Nome dell'applicazione -->
-            <RouterLink class="navbar-brand" to="/">
-                <i class="bi bi-grid-3x3-gap-fill me-2" style="color: #4361ee;"></i>
-                <span style="color: #4361ee; font-weight: bold;">Expo</span>Match
+            <RouterLink class="navbar-brand d-flex align-items-center" to="/">
+                <img src="../assets/logo.png" alt="ExpoMatch Logo" style="height: 40px; margin-right: 10px;">
+                <span style="color: #4361ee; font-weight: bold;">ExpoMatch</span>
             </RouterLink>
             
             <!-- Pulsante hamburger per mobile -->

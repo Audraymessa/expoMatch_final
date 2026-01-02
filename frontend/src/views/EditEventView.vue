@@ -17,10 +17,9 @@
             <div class="spinner-border text-primary" role="status"></div>
         </div>
         
-        <div v-else class="row justify-content-center">
-            <div class="col-lg-8">
-                <div class="form-container">
-                    <h2 class="mb-4">Modifica Evento</h2>
+        <div v-else>
+            <div class="form-container">
+                <h2 class="mb-4">Modifica Evento</h2>
                     
                     <!-- Messaggio di errore -->
                     <div v-if="error" class="alert alert-danger">
@@ -117,14 +116,52 @@
                             </div>
                         </div>
                         
-                        <!-- URL Immagine -->
+                        <!-- Upload immagine -->
                         <div class="mb-3">
-                            <label class="form-label">URL Immagine</label>
-                            <input 
-                                type="url" 
-                                class="form-control" 
-                                v-model="form.immagine"
+                            <label class="form-label">Immagine dell'evento</label>
+                            
+                            <!-- Zona di upload -->
+                            <div 
+                                class="upload-zone"
+                                :class="{ 'has-image': imagePreview }"
+                                @click="$refs.fileInput.click()"
+                                @dragover.prevent
+                                @drop.prevent="handleDrop"
                             >
+                                <input 
+                                    type="file" 
+                                    ref="fileInput"
+                                    @change="handleFileSelect"
+                                    accept="image/*"
+                                    hidden
+                                >
+                                
+                                <!-- Anteprima immagine -->
+                                <img v-if="imagePreview" :src="imagePreview" class="preview-image">
+                                
+                                <!-- Messaggio predefinito -->
+                                <div v-else class="upload-placeholder">
+                                    <i class="bi bi-cloud-upload display-4"></i>
+                                    <p class="mb-0 mt-2">Clicca o trascina un'immagine</p>
+                                    <small class="text-muted">JPG, PNG, GIF - Max 5MB</small>
+                                </div>
+                            </div>
+                            
+                            <!-- Pulsante rimuovi -->
+                            <button 
+                                v-if="imagePreview" 
+                                type="button" 
+                                class="btn btn-outline-danger btn-sm mt-2"
+                                @click="removeImage"
+                            >
+                                <i class="bi bi-trash me-1"></i>Rimuovi immagine
+                            </button>
+                            
+                            <!-- Messaggio di caricamento -->
+                            <div v-if="uploadingImage" class="text-center mt-2">
+                                <div class="spinner-border spinner-border-sm text-primary"></div>
+                                <span class="ms-2">Caricamento...</span>
+                            </div>
                         </div>
                         
                         <!-- Requisiti Tecnici -->
@@ -166,7 +203,6 @@
                             </button>
                         </div>
                     </form>
-                </div>
             </div>
         </div>
     </div>
@@ -194,7 +230,9 @@ export default {
             },
             loadingEvent: true,
             loading: false,
-            error: null
+            error: null,
+            imagePreview: null,      // Anteprima immagine
+            uploadingImage: false    // Stato di caricamento
         }
     },
     
@@ -223,11 +261,75 @@ export default {
                         event.requisiti?.[2] || ''
                     ]
                 }
+                
+                // Mostrare l'anteprima dell'immagine esistente
+                if (event.immagine) {
+                    this.imagePreview = event.immagine
+                }
             } catch (err) {
                 console.error('Errore caricamento evento:', err)
                 this.error = 'Impossibile caricare l\'evento.'
             } finally {
                 this.loadingEvent = false
+            }
+        },
+        
+        // Gestire la selezione del file
+        async handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                await this.uploadImage(file);
+            }
+        },
+        
+        // Gestire il drag & drop
+        async handleDrop(event) {
+            const file = event.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                await this.uploadImage(file);
+            }
+        },
+        
+        // Caricare l'immagine sul server
+        async uploadImage(file) {
+            try {
+                this.uploadingImage = true;
+                
+                // Creare un FormData per inviare il file
+                const formData = new FormData();
+                formData.append('image', file);
+                
+                // Inviare al server
+                const response = await fetch('http://localhost:3000/api/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Memorizzare l'URL dell'immagine
+                    this.form.immagine = data.imageUrl;
+                    // Mostrare l'anteprima
+                    this.imagePreview = data.imageUrl;
+                } else {
+                    alert('Errore: ' + data.error);
+                }
+                
+            } catch (err) {
+                console.error('Errore upload:', err);
+                alert('Errore nel caricamento dell\'immagine');
+            } finally {
+                this.uploadingImage = false;
+            }
+        },
+        
+        // Rimuovere l'immagine
+        removeImage() {
+            this.form.immagine = '';
+            this.imagePreview = null;
+            if (this.$refs.fileInput) {
+                this.$refs.fileInput.value = '';
             }
         },
         
@@ -262,4 +364,42 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+.upload-zone {
+    border: 2px dashed #dee2e6;
+    border-radius: 8px;
+    padding: 30px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    background: #f8f9fa;
+}
+
+.upload-zone:hover {
+    border-color: #4361ee;
+    background: #f0f4ff;
+}
+
+.upload-zone.has-image {
+    padding: 10px;
+    border-style: solid;
+    border-color: #4361ee;
+}
+
+.upload-placeholder {
+    color: #6c757d;
+}
+
+.upload-placeholder i {
+    color: #4361ee;
+}
+
+.preview-image {
+    max-width: 100%;
+    max-height: 200px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+</style>
 

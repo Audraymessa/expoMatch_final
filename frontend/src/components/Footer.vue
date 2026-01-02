@@ -10,8 +10,8 @@
             <div class="row">
                 <!-- Colonna logo e descrizione -->
                 <div class="col-md-4 mb-3">
-                    <h5>
-                        <i class="bi bi-grid-3x3-gap-fill me-2" style="color: #4361ee;"></i>
+                    <h5 class="d-flex align-items-center">
+                        <img src="../assets/logo.png" alt="ExpoMatch Logo" style="height: 30px; margin-right: 10px;">
                         ExpoMatch
                     </h5>
                     <p class="text-muted small">
