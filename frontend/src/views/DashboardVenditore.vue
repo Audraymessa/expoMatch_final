@@ -98,9 +98,10 @@
                         </RouterLink>
                         <button 
                             class="btn btn-sm btn-outline-danger"
-                            @click="confirmDelete(cand)"
+                            @click.prevent="confirmDelete(cand)"
                             :disabled="cand.stato === 'approvata'"
                             :title="cand.stato === 'approvata' ? 'Non puoi ritirare una candidatura approvata' : 'Ritira candidatura'"
+                            type="button"
                         >
                             <i class="bi bi-x-lg"></i>
                         </button>
@@ -119,18 +120,24 @@
         </div>
         
         <!-- Modal di conferma eliminazione -->
-        <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div 
+            v-if="showDeleteModal"
+            class="modal fade show"
+            style="display: block; background-color: rgba(0,0,0,0.5);"
+            @click.self="closeDeleteModal"
+            tabindex="-1"
+        >
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">Ritira candidatura</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        <button type="button" class="btn-close" @click="closeDeleteModal"></button>
                     </div>
                     <div class="modal-body">
                         Sei sicuro di voler ritirare la candidatura per "{{ candidaturaToDelete?.titolo }}"?
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <button type="button" class="btn btn-secondary" @click="closeDeleteModal">
                             Annulla
                         </button>
                         <button type="button" class="btn btn-danger" @click="deleteCandidatura">
@@ -156,7 +163,7 @@ export default {
             error: null,
             defaultImage: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400',
             candidaturaToDelete: null,
-            deleteModal: null
+            showDeleteModal: false
         }
     },
     
@@ -222,21 +229,49 @@ export default {
         
         // Aprire modal di conferma
         confirmDelete(cand) {
+            console.log('confirmDelete chiamato per candidatura:', cand)
+            
+            if (!cand || !cand.id) {
+                console.error('Candidatura non valida:', cand)
+                return
+            }
+            
             this.candidaturaToDelete = cand
-            const modal = new window.bootstrap.Modal(document.getElementById('deleteModal'))
-            this.deleteModal = modal
-            modal.show()
+            this.showDeleteModal = true
+            // Prevenire lo scroll del body quando il modal è aperto
+            document.body.style.overflow = 'hidden'
+        },
+        
+        // Chiudere il modal
+        closeDeleteModal() {
+            this.showDeleteModal = false
+            this.candidaturaToDelete = null
+            document.body.style.overflow = ''
         },
         
         // Eliminare la candidatura
         async deleteCandidatura() {
+            if (!this.candidaturaToDelete) {
+                console.warn('Nessuna candidatura selezionata per l\'eliminazione')
+                return
+            }
+            
+            const candidaturaId = this.candidaturaToDelete.id
+            console.log('Eliminazione candidatura:', candidaturaId)
+            
             try {
-                await candidaturaService.delete(this.candidaturaToDelete.id)
-                this.deleteModal.hide()
+                await candidaturaService.delete(candidaturaId)
+                console.log('Candidatura eliminata con successo')
+                
+                // Chiudere il modal
+                this.closeDeleteModal()
+                
+                // Ricaricare le candidature
                 await this.loadCandidature()
             } catch (err) {
                 console.error('Errore eliminazione:', err)
-                alert('Errore nel ritiro della candidatura')
+                const errorMessage = err.response?.data?.error || err.message || 'Errore nel ritiro della candidatura'
+                alert(errorMessage)
             }
         }
     },

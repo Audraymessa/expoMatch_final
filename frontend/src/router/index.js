@@ -18,6 +18,7 @@ import DashboardVenditore from '../views/DashboardVenditore.vue'
 import CreateEventView from '../views/CreateEventView.vue'
 import EditEventView from '../views/EditEventView.vue'
 import CandidatureEventView from '../views/CandidatureEventView.vue'
+import CalendarioView from '../views/CalendarioView.vue'
 
 // ============================================
 // DEFINIZIONE DELLE ROUTE
@@ -95,6 +96,16 @@ const routes = [
         name: 'DashboardVenditore',
         component: DashboardVenditore,
         meta: { requiresAuth: true, role: 'venditore' }
+    },
+    
+    // ----- ROUTE PROTETTE (ORGANIZZATORE E VENDITORE) -----
+    
+    // Calendario eventi
+    {
+        path: '/calendario',
+        name: 'Calendario',
+        component: CalendarioView,
+        meta: { requiresAuth: true }
     }
 ]
 

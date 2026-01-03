@@ -330,7 +330,18 @@ body {
 }
 
 /* ============================================
-   16. RESPONSIVE
+   16. CALENDARIO
+   ============================================ */
+.calendar-container {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.calendar-day.has-events {
+    background-color: rgba(67, 97, 238, 0.05);
+}
+
+/* ============================================
+   17. RESPONSIVE
    ============================================ */
 @media (max-width: 768px) {
     .hero-section h1 {

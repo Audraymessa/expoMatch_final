@@ -62,6 +62,14 @@
                             </RouterLink>
                         </li>
                         <li class="nav-item">
+                            <RouterLink 
+                                class="nav-link" 
+                                to="/calendario"
+                            >
+                                <i class="bi bi-calendar3 me-1"></i>Calendario
+                            </RouterLink>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link" href="#" @click.prevent="logout">
                                 <i class="bi bi-box-arrow-right me-1"></i>Esci
                             </a>
