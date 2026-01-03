@@ -10,7 +10,7 @@
         <div class="container">
             <!-- Logo / Nome dell'applicazione -->
             <RouterLink class="navbar-brand d-flex align-items-center" to="/">
-                <img src="../assets/logo.png" alt="ExpoMatch Logo" style="height: 40px; margin-right: 10px;">
+                <img src="../assets/logo.png" alt="ExpoMatch Logo" style="height: 70px; margin-right: 15px;">
                 <span style="color: #4361ee; font-weight: bold;">ExpoMatch</span>
             </RouterLink>
             
