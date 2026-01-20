@@ -97,10 +97,10 @@ app.use((req, res) => {
 
 app.listen(PORT, async () => {
     console.log('============================================');
-    console.log('🎪 ExpoMatch API Server');
+    console.log('ExpoMatch API Server');
     console.log('============================================');
-    console.log(`📡 Server avviato su http://localhost:${PORT}`);
-    console.log(`📡 API disponibile su http://localhost:${PORT}/api`);
+    console.log(`Server avviato su http://localhost:${PORT}`);
+    console.log(`API disponibile su http://localhost:${PORT}/api`);
     
     // Test della connessione al database
     await testConnection();

@@ -13,7 +13,8 @@ const {
     getMyCandidature, 
     getEventCandidature, 
     updateCandidaturaStatus, 
-    deleteCandidatura 
+    deleteCandidatura,
+    checkCandidatura 
 } = require('../controllers/candidaturaController');
 
 const { verifyToken, isOrganizzatore, isVenditore } = require('../middleware/authMiddleware');
@@ -23,16 +24,17 @@ const { verifyToken, isOrganizzatore, isVenditore } = require('../middleware/aut
 // ============================================
 
 // POST /api/candidature - Candidarsi a un evento
-// Body atteso: { evento_id, messaggio? }
-// Riservato ai venditori
 router.post('/', verifyToken, isVenditore, createCandidatura);
 
 // GET /api/candidature/mie - Vedere le mie candidature
-// Riservato ai venditori
 router.get('/mie', verifyToken, isVenditore, getMyCandidature);
 
+// =========================================================
+// GET /api/candidature/check/:evento_id - Controllare se sono già candidato
+router.get('/check/:evento_id', verifyToken, isVenditore, checkCandidatura);
+// =========================================================
+
 // DELETE /api/candidature/:id - Ritirare la mia candidatura
-// Riservato ai venditori (proprietario della candidatura)
 router.delete('/:id', verifyToken, isVenditore, deleteCandidatura);
 
 // ============================================
@@ -40,13 +42,9 @@ router.delete('/:id', verifyToken, isVenditore, deleteCandidatura);
 // ============================================
 
 // GET /api/candidature/evento/:evento_id - Candidature di un evento
-// Riservato all'organizzatore proprietario dell'evento
 router.get('/evento/:evento_id', verifyToken, isOrganizzatore, getEventCandidature);
 
 // PUT /api/candidature/:id - Approvare/Rifiutare una candidatura
-// Body atteso: { stato: 'approvata' | 'rifiutata' }
-// Riservato all'organizzatore proprietario dell'evento
 router.put('/:id', verifyToken, isOrganizzatore, updateCandidaturaStatus);
 
 module.exports = router;
-

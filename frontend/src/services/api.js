@@ -52,7 +52,10 @@ api.interceptors.response.use(
         if (error.response && error.response.status === 401) {
             localStorage.removeItem('token')
             localStorage.removeItem('user')
-            window.location.href = '/login'
+            // Opzionale: reindirizzare al login solo se non ci si trova già
+            if (!window.location.pathname.includes('/login')) {
+                 window.location.href = '/login'
+            }
         }
         return Promise.reject(error)
     }
@@ -127,7 +130,7 @@ export const eventService = {
     
     // Recuperare i miei eventi (organizzatore)
     async getMyEvents() {
-        const response = await api.get('/eventi/miei/lista')
+        const response = await api.get('/eventi/miei/lista') // Controlla che questa rotta esista nel backend, altrimenti usa /eventi/miei
         return response.data
     },
     
@@ -183,8 +186,13 @@ export const candidaturaService = {
     async delete(id) {
         const response = await api.delete(`/candidature/${id}`)
         return response.data
+    },
+
+    // Verifica stato candidatura (CORRETTO con 'api')
+    check: async (eventoId) => {
+        const response = await api.get(`/candidature/check/${eventoId}`);
+        return response.data
     }
 }
 
 export default api
-

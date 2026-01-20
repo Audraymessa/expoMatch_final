@@ -1,6 +1,6 @@
 // ============================================
 // CONTROLLER DELLE CANDIDATURE
-// ============================================
+
 // Gestisce le candidature dei venditori agli eventi
 // Permette agli organizzatori di approvare/rifiutare le richieste
 
@@ -263,12 +263,48 @@ const deleteCandidatura = async (req, res) => {
         });
     }
 };
+// ============================================
+//  Verifica stato candidatura
+// ============================================
+// nuova funziona per verificare se un venditore ha già candidato a un evento
+
+const checkCandidatura = async (req, res) => {
+    try {
+        const { evento_id } = req.params;
+        const venditore_id = req.user.id; // Preso dal token
+
+        // Cerca se esiste una candidatura per questo evento e questo utente
+        const [candidature] = await pool.query(
+            'SELECT stato FROM candidature WHERE evento_id = ? AND venditore_id = ?',
+            [evento_id, venditore_id]
+        );
+
+        if (candidature.length > 0) {
+            // Trovata! Restituisci true e lo stato (es. 'in_attesa' o 'approvata')
+            return res.json({ 
+                candidato: true, 
+                stato: candidature[0].stato 
+            });
+        }
+
+        // Non trovata
+        res.json({ 
+            candidato: false, 
+            stato: null 
+        });
+
+    } catch (error) {
+        console.error('Errore checkCandidatura:', error);
+        res.status(500).json({ error: 'Errore nel controllo della candidatura.' });
+    }
+};
 
 module.exports = { 
     createCandidatura, 
     getMyCandidature, 
     getEventCandidature, 
     updateCandidaturaStatus, 
-    deleteCandidatura 
+    deleteCandidatura ,
+    checkCandidatura
 };
 

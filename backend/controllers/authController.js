@@ -1,6 +1,5 @@
-// ============================================
 // CONTROLLER DI AUTENTICAZIONE
-// ============================================
+
 // Gestisce la registrazione e l'accesso degli utenti
 // Utilizza bcrypt per hashare le password
 // Utilizza JWT per generare i token di sessione
@@ -10,11 +9,8 @@ const jwt = require('jsonwebtoken');
 const { pool } = require('../config/database');
 require('dotenv').config();
 
-// ============================================
+
 // REGISTER - Registrazione di un nuovo utente
-// ============================================
-// POST /api/auth/register
-// Body: { nome, email, password, ruolo }
 
 const register = async (req, res) => {
     try {
@@ -48,7 +44,6 @@ const register = async (req, res) => {
         }
 
         // 5. Hashare la password con bcrypt
-        // Il "10" è il numero di "salt rounds" (più = più sicuro ma più lento)
         const hashedPassword = await bcrypt.hash(password, 10);
 
         // 6. Inserire l'utente nel database
@@ -77,11 +72,8 @@ const register = async (req, res) => {
     }
 };
 
-// ============================================
+
 // LOGIN - Accesso di un utente esistente
-// ============================================
-// POST /api/auth/login
-// Body: { email, password }
 
 const login = async (req, res) => {
     try {
@@ -151,12 +143,7 @@ const login = async (req, res) => {
     }
 };
 
-// ============================================
-// GET PROFILE - Recuperare il profilo dell'utente connesso
-// ============================================
-// GET /api/auth/profile
-// Richiede: Token JWT valido
-
+// richiede un token JWT valido
 const getProfile = async (req, res) => {
     try {
         // req.user è aggiunto dal middleware verifyToken

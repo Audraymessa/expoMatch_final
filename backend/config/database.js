@@ -1,8 +1,4 @@
-// ============================================
 // CONFIGURAZIONE DEL DATABASE MySQL
-// ============================================
-// Questo file gestisce la connessione al database MySQL
-// Utilizza mysql2 con il supporto delle Promise per async/await
 
 // Importazione del modulo mysql2 con supporto Promise
 const mysql = require('mysql2/promise');
@@ -10,11 +6,8 @@ const mysql = require('mysql2/promise');
 // Caricamento delle variabili d'ambiente da .env
 require('dotenv').config();
 
-// ============================================
-// Creazione del pool di connessioni
-// ============================================
-// Un "pool" consente di riutilizzare le connessioni invece di crearne
-// una nuova ad ogni richiesta (più performante)
+// crea un pool di connessioni tra backend (nodejs) e database (mysql) 
+/* tutte quelle scritte process.env.DB_HOST, process.env.DB_USER, eccQuesto file sta dicendo: "Non scrivere la password qui in chiaro! Valla a leggere dal file .env che abbiamo protetto prima con il .gitignore*/
 
 const pool = mysql.createPool({
     host: process.env.DB_HOST,         // Indirizzo del server MySQL (localhost)
@@ -33,11 +26,11 @@ const pool = mysql.createPool({
 
 async function testConnection() {
     try {
-        const connection = await pool.getConnection();
-        console.log('✅ Connessione MySQL riuscita!');
+        const connection = await pool.getConnection(); //se tutto Apposto stampa questo
+        console.log(' Connessione MySQL riuscita!');
         connection.release(); // Liberare la connessione
     } catch (error) {
-        console.error('❌ Errore connessione MySQL:', error.message);
+        console.error(' Errore connessione MySQL:', error.message);
     }
 }
 
